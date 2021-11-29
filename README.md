@@ -17,8 +17,8 @@ NetCDF based file writer to save key information, such as the charge density and
 ### Main.f90
 Uses all other fortran modules to take a command line input, and from it generate all required data and save to a file.
 
-Currently supported kwargs are:
--
+Currently supported command line kwargs are
+
 
 ## Python
 ### DataVis.py
