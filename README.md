@@ -2,8 +2,9 @@
 HetSys PX913 Group Project Repo
 
 ## Fortran
-### CustomTypes.f90
-Defines the Field and Particle custom types, which are used in other Fortran modules
+### GlobalUtils.f90
+Defines the RunData, Field and Particle custom types, which are used in other Fortran modules
+Also defines the three initial conditions required for the project : "Null", "Single" and "Double"
 
 ### FieldSolver.f90
 Uses the Gauss-Seidel method to iteratively solve for the Electric Potential given the charge distribution, and hence find the Electric Field.
