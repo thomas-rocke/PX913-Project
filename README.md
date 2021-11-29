@@ -1,2 +1,25 @@
 # PX913-Project
 HetSys PX913 Group Project Repo
+
+## Fortran
+### CustomTypes.f90
+Defines the Field and Particle custom types, which are used in other Fortran modules
+
+### FieldSolver.f90
+Uses the Gauss-Seidel method to iteratively solve for the Electric Potential given the charge distribution, and hence find the Electric Field.
+
+### ParticleSolver.f90
+Uses a Verlet method to generate a particle trajectory given the Electric Field, and a particle with initial position and velocity
+
+### PathWriter.f90
+NetCDF based file writer to save key information, such as the charge density and electric fields, and the particle positions, velocities, and accelerations.
+
+### Main.f90
+Uses all other fortran modules to take a command line input, and from it generate all required data and save to a file.
+
+Currently supported kwargs are:
+-
+
+## Python
+### DataVis.py
+Loads data for NetCDF file format, and provides key visualisation of the system.
