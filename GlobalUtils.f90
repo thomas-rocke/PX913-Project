@@ -104,8 +104,7 @@ module GlobalUtils
 
 end module GlobalUtils
 
-
-program testGlobs
+program testGlobals
   implicit none
 
-end program testGlobs
+end program testGlobals
