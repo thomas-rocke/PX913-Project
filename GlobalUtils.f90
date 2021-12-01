@@ -104,7 +104,6 @@ module GlobalUtils
 
 end module GlobalUtils
 
-
 program testGlobals
   implicit none
 
