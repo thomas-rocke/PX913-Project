@@ -1,4 +1,4 @@
-#PX913-Project/src
+# PX913-Project/src
 Source code for the project
 
 ## Fortran
@@ -29,5 +29,5 @@ Loads data for NetCDF file, and provides key visualisation of the system.
 ### PIFreader.py
 Contains PIFreader class to enable .pif files to very easily be read.
 
-###Logging.py
+### Logging.py
 Utilities for generating log files during python runtime
