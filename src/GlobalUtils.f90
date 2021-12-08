@@ -5,6 +5,7 @@
 
 module GlobalUtils
   use ISO_FORTRAN_ENV
+  !use LAPACK
   implicit none
   
   private
@@ -36,6 +37,51 @@ module GlobalUtils
 
 
   contains
+
+  ! ####################
+  ! # USEFUL FUNCTIONS #
+  ! ####################
+
+  function inverse(A) result(A_inverse)
+    ! Computes the matrix inverse of A using Lapack
+    ! Using recipe taken from:
+    ! https://fortranwiki.org/fortran/show/Matrix+inversion
+
+    real(kind=REAL64), dimension(:, :), intent(in) :: A
+    real(kind=REAL64), dimension(size(A, 1), size(A, 2)):: A_inverse
+
+    real(kind=REAL64), dimension(size(A,1)) :: work  ! work array for LAPACK
+    integer, dimension(size(A,1)) :: ipiv   ! pivot indices
+    integer :: n, info
+    
+    ! Define LAPACK external procedures
+    external DGETRF
+    external DGETRI
+
+    ! Copy A into A_inverse (LAPACK would otherwise modify A)
+    A_inverse = A
+    n = size(A,1) ! Side length of square matrix A
+
+    ! Compute the LU factorisation of A (using the A_inverse copy)
+    call DGETRF(n, n, A_inverse, n, ipiv, info)
+
+    if (info /= 0) then
+      stop 'Matrix is numerically singular!'
+    end if
+
+    ! Use the LU factorisation to compute the inverse of A
+    call DGETRI(n, A_inverse, n, ipiv, work, n, info)
+
+    if (info /= 0) then
+      stop 'Matrix inversion failed!'
+    end if
+
+  end function
+
+  ! #####################
+  ! # INITIAL CONDIIONS #
+  ! ##################### 
+
 
   subroutine NullInitial(particle, fields, run_data)
     ! Initialises the input Particle and Fields objects based on "Null" initial condition specification
