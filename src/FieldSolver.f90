@@ -34,10 +34,13 @@ module FieldSolver
     real(kind=REAL64), optional, intent(in) :: tolerance
     integer, optional, intent(in) :: max_iters
     integer :: N_iters, iter
-    real(kind=REAL64) :: inv_dx_square, inv_dy_square, e_tot, d_rms, error, err_tol
+    real(kind=REAL64) :: inv_dx, inv_dy, inv_dx_square, inv_dy_square, e_tot, d_rms, error, err_tol
 
-    inv_dx_square = 1.0_REAL64/real(Run_Data%nx * Run_Data%nx, REAL64)
-    inv_dy_square = 1.0_REAL64/real(Run_Data%ny * Run_Data%ny, REAL64)
+    inv_dx = 1.0_REAL64/real(Run_Data%nx, REAL64)
+    inv_dy = 1.0_REAL64/real(Run_Data%ny, REAL64)
+
+    inv_dx_square = inv_dx * inv_dx
+    inv_dy_square = inv_dy * inv_dy
 
     if (present(tolerance)) then
       err_tol = tolerance
@@ -62,6 +65,10 @@ module FieldSolver
       if (error <= err_tol) exit ! Abort loop if convergence reached
     end do
 
+    ! Update the electric field components
+    call E_x(Field_Data, inv_dx)
+    call E_y(Field_Data, inv_dy)
+
   end subroutine
 
 
@@ -83,6 +90,51 @@ module FieldSolver
         ! Compute the 2nd order total derivative of phi at position (i, j)
         deriv = Total_Deriv_2D(phi(i-1:i+1, j-1:j+1), inv_dx_square, inv_dy_square)
         phi(i, j) = inv_denom * (deriv - rho(i, j))
+      end do
+    end do
+  end subroutine
+
+
+  ! ##################
+  ! # ELECTRIC FIELD #
+  ! ##################
+
+  subroutine E_x(Field_Data, inv_dx)
+    ! Solve the x component of the electric field given the potential
+    type(FieldType), intent(inout) :: Field_Data
+    real(kind=REAL64), intent(in) :: inv_dx
+    real(kind=REAL64), dimension(0:size(Field_Data%electricPotential, 1) + 1, &
+                                  0:size(Field_Data%electricPotential, 2) + 1) :: Guarded_phi
+    integer :: i, j
+
+    Guarded_phi = 0.0_REAL64
+
+    Guarded_phi(1:size(Field_Data%electricPotential, 1), 1:size(Field_Data%electricPotential, 2)) = Field_Data%electricPotential
+
+    !$omp parallel do private(i) shared(Field_Data%electricPotential, Guarded_phi)
+    do j=1, size(Field_Data%electricPotential, 2)
+      do i=1, size(Field_Data%electricPotential, 1)
+        Field_Data%Ex(i, j) = (Guarded_phi(i+1, j) - Guarded_phi(i-1, j)) * 0.5_REAL64 * inv_dx
+      end do
+    end do
+  end subroutine
+
+  subroutine E_y(Field_Data, inv_dy)
+    ! Solve the y component of the electric field given the potential
+    type(FieldType), intent(inout) :: Field_Data
+    real(kind=REAL64), intent(in) :: inv_dy
+    real(kind=REAL64), dimension(0:size(Field_Data%electricPotential, 1) + 1, &
+                                  0:size(Field_Data%electricPotential, 2) + 1) :: Guarded_phi
+    integer :: i, j
+
+    Guarded_phi = 0.0_REAL64
+
+    Guarded_phi(1:size(Field_Data%electricPotential, 1), 1:size(Field_Data%electricPotential, 2)) = Field_Data%electricPotential
+
+    !$omp parallel do private(i) shared(Field_Data%electricPotential, Guarded_phi)
+    do j=1, size(Field_Data%electricPotential, 2)
+      do i=1, size(Field_Data%electricPotential, 1)
+        Field_Data%Ey(i, j) = (Guarded_phi(i, j+1) - Guarded_phi(i, j-1)) * 0.5_REAL64 * inv_dy
       end do
     end do
   end subroutine
@@ -174,10 +226,15 @@ program TestField
   type(FieldType) :: Field_Data
   type(ParticleType) :: particle
 
-  Run_Data%nx = 100
-  Run_Data%ny = 100
+  Run_Data%nx = 10
+  Run_Data%ny = 10
   
   call NullInitial(particle, Field_Data, Run_Data)
   call Get_Field(Run_Data, Field_Data)
+
+  Print *, Field_Data%electricPotential
+  Print *, Field_Data%Ex
+  Print *, Field_Data%Ey
+
 
 end program
