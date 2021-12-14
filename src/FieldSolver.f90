@@ -8,11 +8,63 @@ module FieldSolver
   use GlobalUtils
   implicit none
 
+  private
+  public Get_Field
+
+  ! ####################
+  ! # MODULE VARIABLES #
+  ! ####################
+  real(kind=REAL64), parameter :: DEFAULT_TOLERANCE = 1e-4
+  integer, parameter :: DEFAULT_MAX_ITERS = 1000
+
   contains
 
   ! ################
   ! # GAUSS-SEIDEL #
   ! ################
+
+  subroutine Get_Field(Run_Data, Field_Data, tolerance, max_iters)
+    ! Uses Gauss-Seidel iteration to converge Field_Data%rho, such that 
+    ! grad^2 Gield_Data%rho = Field_Data%phi
+    ! tolerance is the maximum error tolerance for successful convergence
+    ! max_iters is the maximum number of iterations done before
+    ! convergence taken as failed 
+    type(RunData), intent(in) :: Run_Data
+    type(FieldType), intent(inout) :: Field_Data
+    real(kind=REAL64), optional, intent(in) :: tolerance
+    integer, optional, intent(in) :: max_iters
+    integer :: N_iters, iter
+    real(kind=REAL64) :: inv_dx_square, inv_dy_square, e_tot, d_rms, error, err_tol
+
+    inv_dx_square = 1.0_REAL64/real(Run_Data%nx * Run_Data%nx, REAL64)
+    inv_dy_square = 1.0_REAL64/real(Run_Data%ny * Run_Data%ny, REAL64)
+
+    if (present(tolerance)) then
+      err_tol = tolerance
+    else 
+      err_tol = DEFAULT_TOLERANCE
+    end if
+
+    if (present(max_iters)) then
+      N_iters = max_iters
+    else
+      N_iters = DEFAULT_MAX_ITERS
+    end if
+    
+    do iter=1,N_iters
+      call Gauss_Seidel_Iteration(Field_Data%phi, Field_Data%rho, inv_dx_square, inv_dy_square)
+
+      e_tot = get_e_tot(Field_Data%phi, Field_Data%rho, inv_dx_square, inv_dy_square)
+      d_rms = get_d_rms(Field_Data%phi, Field_Data%rho, inv_dx_square, inv_dy_square)
+      error = abs(e_tot / d_rms)
+
+      Print *, "Iteration ", iter, " finished with error ", error
+
+      if (error <= err_tol) exit ! Abort loop if convergence reached
+    end do
+
+  end subroutine
+
 
   subroutine Gauss_Seidel_Iteration(phi, rho, inv_dx_square, inv_dy_square)
     ! Performs one iteration of the Gauss-Seidel method to solve phi
