@@ -23,21 +23,20 @@ module FieldSolver
   ! # GAUSS-SEIDEL #
   ! ################
 
-  subroutine Get_Field(Run_Data, Field_Data, tolerance, max_iters)
-    ! Uses Gauss-Seidel iteration to converge Field_Data%electricPotential, such that 
-    ! grad^2 Gield_Data%chargeDensity = Field_Data%electricPotential
+  subroutine Get_Field(Fields, tolerance, max_iters)
+    ! Uses Gauss-Seidel iteration to converge Fields%phi, such that 
+    ! grad^2 Gield_Data%rho = Fields%phi
     ! tolerance is the maximum error tolerance for successful convergence
     ! max_iters is the maximum number of iterations done before
     ! convergence taken as failed 
-    type(RunData), intent(in) :: Run_Data
-    type(FieldType), intent(inout) :: Field_Data
+    type(FieldType), intent(inout) :: Fields
     real(kind=REAL64), optional, intent(in) :: tolerance
     integer, optional, intent(in) :: max_iters
     integer :: N_iters, iter
     real(kind=REAL64) :: inv_dx, inv_dy, inv_dx_square, inv_dy_square, e_tot, d_rms, error, err_tol
 
-    inv_dx = 1.0_REAL64/Field_Data%dx
-    inv_dy = 1.0_REAL64/Field_Data%dy
+    inv_dx = 1.0_REAL64/Fields%dx
+    inv_dy = 1.0_REAL64/Fields%dy
 
     inv_dx_square = inv_dx * inv_dx
     inv_dy_square = inv_dy * inv_dy
@@ -55,10 +54,10 @@ module FieldSolver
     end if
     
     do iter=1,N_iters
-      call Gauss_Seidel_Iteration(Field_Data%electricPotential, Field_Data%chargeDensity, inv_dx_square, inv_dy_square)
+      call Gauss_Seidel_Iteration(Fields%phi, Fields%rho, inv_dx_square, inv_dy_square)
 
-      e_tot = get_e_tot(Field_Data%electricPotential, Field_Data%chargeDensity, inv_dx_square, inv_dy_square)
-      d_rms = get_d_rms(Field_Data%electricPotential, inv_dx_square, inv_dy_square)
+      e_tot = get_e_tot(Fields%phi, Fields%rho, inv_dx_square, inv_dy_square)
+      d_rms = get_d_rms(Fields%phi, inv_dx_square, inv_dy_square)
       error = abs(e_tot / d_rms)
 
       Print *, "Iteration ", iter, " finished with error ", error
@@ -66,8 +65,8 @@ module FieldSolver
     end do
 
     ! Update the electric field components
-    call E_x(Field_Data, inv_dx)
-    call E_y(Field_Data, inv_dy)
+    call E_x(Fields, inv_dx)
+    call E_y(Fields, inv_dy)
 
   end subroutine
 
@@ -99,42 +98,42 @@ module FieldSolver
   ! # ELECTRIC FIELD #
   ! ##################
 
-  subroutine E_x(Field_Data, inv_dx)
+  subroutine E_x(Fields, inv_dx)
     ! Solve the x component of the electric field given the potential
-    type(FieldType), intent(inout) :: Field_Data
+    type(FieldType), intent(inout) :: Fields
     real(kind=REAL64), intent(in) :: inv_dx
-    real(kind=REAL64), dimension(0:size(Field_Data%electricPotential, 1) + 1, &
-                                  0:size(Field_Data%electricPotential, 2) + 1) :: Guarded_phi
+    real(kind=REAL64), dimension(0:size(Fields%phi, 1) + 1, &
+                                  0:size(Fields%phi, 2) + 1) :: Guarded_phi
     integer :: i, j
 
     Guarded_phi = 0.0_REAL64
 
-    Guarded_phi(1:size(Field_Data%electricPotential, 1), 1:size(Field_Data%electricPotential, 2)) = Field_Data%electricPotential
+    Guarded_phi(1:size(Fields%phi, 1), 1:size(Fields%phi, 2)) = Fields%phi
 
-    !$omp parallel do private(i) shared(Field_Data%electricPotential, Guarded_phi)
-    do j=1, size(Field_Data%electricPotential, 2)
-      do i=1, size(Field_Data%electricPotential, 1)
-        Field_Data%Ex(i, j) = (Guarded_phi(i+1, j) - Guarded_phi(i-1, j)) * 0.5_REAL64 * inv_dx
+    !$omp parallel do private(i) shared(Fields%phi, Guarded_phi)
+    do j=1, size(Fields%phi, 2)
+      do i=1, size(Fields%phi, 1)
+        Fields%Ex(i, j) = (Guarded_phi(i+1, j) - Guarded_phi(i-1, j)) * 0.5_REAL64 * inv_dx
       end do
     end do
   end subroutine
 
-  subroutine E_y(Field_Data, inv_dy)
+  subroutine E_y(Fields, inv_dy)
     ! Solve the y component of the electric field given the potential
-    type(FieldType), intent(inout) :: Field_Data
+    type(FieldType), intent(inout) :: Fields
     real(kind=REAL64), intent(in) :: inv_dy
-    real(kind=REAL64), dimension(0:size(Field_Data%electricPotential, 1) + 1, &
-                                  0:size(Field_Data%electricPotential, 2) + 1) :: Guarded_phi
+    real(kind=REAL64), dimension(0:size(Fields%phi, 1) + 1, &
+                                  0:size(Fields%phi, 2) + 1) :: Guarded_phi
     integer :: i, j
 
     Guarded_phi = 0.0_REAL64
 
-    Guarded_phi(1:size(Field_Data%electricPotential, 1), 1:size(Field_Data%electricPotential, 2)) = Field_Data%electricPotential
+    Guarded_phi(1:size(Fields%phi, 1), 1:size(Fields%phi, 2)) = Fields%phi
 
-    !$omp parallel do private(i) shared(Field_Data%electricPotential, Guarded_phi)
-    do j=1, size(Field_Data%electricPotential, 2)
-      do i=1, size(Field_Data%electricPotential, 1)
-        Field_Data%Ey(i, j) = (Guarded_phi(i, j+1) - Guarded_phi(i, j-1)) * 0.5_REAL64 * inv_dy
+    !$omp parallel do private(i) shared(Fields%phi, Guarded_phi)
+    do j=1, size(Fields%phi, 2)
+      do i=1, size(Fields%phi, 1)
+        Fields%Ey(i, j) = (Guarded_phi(i, j+1) - Guarded_phi(i, j-1)) * 0.5_REAL64 * inv_dy
       end do
     end do
   end subroutine
@@ -223,18 +222,18 @@ program TestField
   implicit none
 
   type(RunData) :: Run_Data
-  type(FieldType) :: Field_Data
+  type(FieldType) :: Fields
   type(ParticleType) :: particle
 
   Run_Data%nx = 10
   Run_Data%ny = 10
   
-  call NullInitial(particle, Field_Data, Run_Data)
-  call Get_Field(Run_Data, Field_Data)
+  call NullInitial(particle, Fields, Run_Data)
+  call Get_Field(Fields)
 
-  Print *, Field_Data%electricPotential
-  Print *, Field_Data%Ex
-  Print *, Field_Data%Ey
+  Print *, Fields%phi
+  Print *, Fields%Ex
+  Print *, Fields%Ey
 
 
 end program
