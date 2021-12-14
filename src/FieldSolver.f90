@@ -36,8 +36,8 @@ module FieldSolver
     integer :: N_iters, iter
     real(kind=REAL64) :: inv_dx, inv_dy, inv_dx_square, inv_dy_square, e_tot, d_rms, error, err_tol
 
-    inv_dx = 1.0_REAL64/real(Run_Data%nx, REAL64)
-    inv_dy = 1.0_REAL64/real(Run_Data%ny, REAL64)
+    inv_dx = 1.0_REAL64/Field_Data%dx
+    inv_dy = 1.0_REAL64/Field_Data%dy
 
     inv_dx_square = inv_dx * inv_dx
     inv_dy_square = inv_dy * inv_dy
