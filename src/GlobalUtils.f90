@@ -5,6 +5,7 @@
 
 module GlobalUtils
   use ISO_FORTRAN_ENV
+  use domain_tools
   implicit none
   
   private
@@ -16,7 +17,6 @@ module GlobalUtils
 
   type :: RunData
     integer :: nx, ny, numTimesteps
-
   end type
 
   type :: ParticleType
@@ -28,6 +28,10 @@ module GlobalUtils
   type :: FieldType
     ! Store 2D arrays of the charge density, electric potential, and both x- and y-components of the Electric Field
     real(kind=REAL64), dimension(:, :), allocatable :: chargeDensity, electricPotential, Ex, Ey
+    ! Store arrays of the axes
+    real(kind=REAL64), dimension(:), allocatable :: x_axis, y_axis
+    ! Store the grid spacings in x and y
+    real(kind=REAL64) :: dx, dy
   end type
 
   ! ####################
@@ -78,6 +82,8 @@ module GlobalUtils
     if (allocated(fields%electricPotential)) deallocate(fields%electricPotential)
     if (allocated(fields%Ex)) deallocate(fields%Ex)
     if (allocated(fields%Ey)) deallocate(fields%Ey)
+    if (allocated(fields%x_axis)) deallocate(fields%x_axis)
+    if (allocated(fields%y_axis)) deallocate(fields%y_axis)
 
     ! Particle object allocation
     allocate(particle%positions(0:num_timesteps, 2))
@@ -87,8 +93,11 @@ module GlobalUtils
     ! Fields object allocation
     allocate(fields%chargeDensity(0:nx+1, 0:ny+1))
     allocate(fields%electricPotential(0:nx+1, 0:ny+1))
-    allocate(fields%Ex(0:nx+1, 0:ny+1))
-    allocate(fields%Ey(0:nx+1, 0:ny+1))
+    allocate(fields%Ex(1:nx, 1:ny))
+    allocate(fields%Ey(1:nx, 1:ny))
+    
+    call create_axis(fields%x_axis, nx, (/-1.0_REAL64, 1.0_REAL64/), delta=fields%dx)
+    call create_axis(fields%y_axis, ny, (/-1.0_REAL64, 1.0_REAL64/), delta=fields%dy)
 
     ! Particle object defaults
     particle%positions = 0_REAL64
