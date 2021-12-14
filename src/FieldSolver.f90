@@ -230,10 +230,8 @@ program TestField
   
   call NullInitial(particle, Fields, Run_Data)
   call Get_Field(Fields)
-
-  Print *, Fields%phi
-  Print *, Fields%Ex
-  Print *, Fields%Ey
+  
+  Print *, Fields%E((/0.0_REAL64, 0.0_REAL64/))
 
 
 end program

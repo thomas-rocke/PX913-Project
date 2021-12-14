@@ -32,6 +32,8 @@ module GlobalUtils
     real(kind=REAL64), dimension(:), allocatable :: x_axis, y_axis
     ! Store the grid spacings in x and y
     real(kind=REAL64) :: dx, dy
+    contains
+    procedure :: E => Get_E_At_Pos
   end type
 
   ! ####################
@@ -40,6 +42,10 @@ module GlobalUtils
 
 
   contains
+
+  ! #################################
+  ! # INITIAL CONDITIONS PROCEDURES #
+  ! #################################
 
   subroutine NullInitial(particle, fields, run_data)
     ! Initialises the input Particle and Fields objects based on "Null" initial condition specification
@@ -63,6 +69,31 @@ module GlobalUtils
     
   end subroutine
 
+  ! #######################
+  ! # E FIELD AT POSITION #
+  ! #######################
+
+  function Get_E_At_Pos(fields, position) result(E_field)
+    ! Gets the electric field strength (E_x, E_y) at position (x, y)
+    ! Given the fields object
+    ! ASSUMES SPATIAL DOMAIN OF (-1.0, 1.0)
+    class(FieldType), intent(in) :: fields
+    real(kind=REAL64), dimension(2), intent(in) :: position
+    real(kind=REAL64), dimension(2) :: E_field
+    integer :: x_index, y_index
+
+    ! Get closest indeces corresponding to position on grid
+    x_index = floor((position(1) - 1.0_REAL64)/fields%dx) + 1
+    y_index = floor((position(2) - 1.0_REAL64)/fields%dy) + 1
+
+    ! Populate E_field with closest Ex and Ey grid cells
+    E_field(1) = fields%Ex(x_index, y_index)
+    E_field(2) = fields%Ey(x_index, y_index)
+  end function
+
+  ! ######################################
+  ! # VARIABLE INITIALISATION SUBROUTINE #
+  ! ######################################
   subroutine CleanAndAllocate(particle, fields, nx, ny, num_timesteps)
     ! Deallocates particle and fields type attributes (positions, charge density, velocities, ...)
     ! And Allocates all attributes to the correct size
@@ -95,7 +126,6 @@ module GlobalUtils
     allocate(fields%phi(0:nx+1, 0:ny+1))
     allocate(fields%Ex(1:nx, 1:ny))
     allocate(fields%Ey(1:nx, 1:ny))
-    
     call create_axis(fields%x_axis, nx, (/-1.0_REAL64, 1.0_REAL64/), delta=fields%dx)
     call create_axis(fields%y_axis, ny, (/-1.0_REAL64, 1.0_REAL64/), delta=fields%dy)
 
