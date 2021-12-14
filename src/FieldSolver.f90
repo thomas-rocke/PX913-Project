@@ -24,8 +24,8 @@ module FieldSolver
   ! ################
 
   subroutine Get_Field(Run_Data, Field_Data, tolerance, max_iters)
-    ! Uses Gauss-Seidel iteration to converge Field_Data%rho, such that 
-    ! grad^2 Gield_Data%rho = Field_Data%phi
+    ! Uses Gauss-Seidel iteration to converge Field_Data%electricPotential, such that 
+    ! grad^2 Gield_Data%chargeDensity = Field_Data%electricPotential
     ! tolerance is the maximum error tolerance for successful convergence
     ! max_iters is the maximum number of iterations done before
     ! convergence taken as failed 
@@ -52,14 +52,13 @@ module FieldSolver
     end if
     
     do iter=1,N_iters
-      call Gauss_Seidel_Iteration(Field_Data%phi, Field_Data%rho, inv_dx_square, inv_dy_square)
+      call Gauss_Seidel_Iteration(Field_Data%electricPotential, Field_Data%chargeDensity, inv_dx_square, inv_dy_square)
 
-      e_tot = get_e_tot(Field_Data%phi, Field_Data%rho, inv_dx_square, inv_dy_square)
-      d_rms = get_d_rms(Field_Data%phi, Field_Data%rho, inv_dx_square, inv_dy_square)
+      e_tot = get_e_tot(Field_Data%electricPotential, Field_Data%chargeDensity, inv_dx_square, inv_dy_square)
+      d_rms = get_d_rms(Field_Data%electricPotential, inv_dx_square, inv_dy_square)
       error = abs(e_tot / d_rms)
 
       Print *, "Iteration ", iter, " finished with error ", error
-
       if (error <= err_tol) exit ! Abort loop if convergence reached
     end do
 
@@ -163,3 +162,22 @@ module FieldSolver
   end function
 
 end module FieldSolver
+
+program TestField
+  use ISO_FORTRAN_ENV
+  use GlobalUtils
+  use FieldSolver
+
+  implicit none
+
+  type(RunData) :: Run_Data
+  type(FieldType) :: Field_Data
+  type(ParticleType) :: particle
+
+  Run_Data%nx = 100
+  Run_Data%ny = 100
+  
+  call NullInitial(particle, Field_Data, Run_Data)
+  call Get_Field(Run_Data, Field_Data)
+
+end program
