@@ -3,11 +3,5 @@
 
 
 module ParticleSolver
-  implicit none
-
-
-
-
-
-
+  
 end module ParticleSolver

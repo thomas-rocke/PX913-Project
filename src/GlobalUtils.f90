@@ -103,8 +103,3 @@ module GlobalUtils
   end subroutine
 
 end module GlobalUtils
-
-program testGlobals
-  implicit none
-
-end program testGlobals
