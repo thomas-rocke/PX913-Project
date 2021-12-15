@@ -47,6 +47,39 @@ module GlobalUtils
   ! # INITIAL CONDITIONS PROCEDURES #
   ! #################################
 
+  subroutine SingleInitial(particle, fields, run_data)
+    ! Initialises the input Particle and Fields objects based on "Single" initial condition specification
+    type(ParticleType), intent(inout) :: particle
+    type(FieldType), intent(inout) :: fields
+    type(runData), intent(in) :: run_data
+
+    integer :: nx, ny, num_timesteps, i, j
+    real(kind=REAL64) :: x, y, x_exp, y_exp
+
+    nx = run_data%nx
+    ny = run_data%ny
+    num_timesteps = run_data % numTimesteps
+
+    call CleanAndAllocate(particle, fields, nx, ny, num_timesteps)
+
+    ! Initial conditions on the particle
+    particle%pos(0, :) = (/0.1_REAL64, 0.0_REAL64/)
+
+    ! Initial conditions on rho
+    ! rho(x, y) = exp(-(x/0.1)^2 - (y/0.1)^2)
+    !$omp parallel do private(i, x, y, x_exp, y_exp) shared(fields)
+    do j=1, ny
+      y = j*fields%dy - 1.0_REAL64
+      y_exp = exp(-(100.0_REAL64 * y * y))
+      do i=1, nx
+        x = i*fields%dx - 1.0_REAL64
+        x_exp = exp(-(100.0_REAL64 * x * x))
+        fields%rho(i, j) = x_exp * y_exp
+      end do
+    end do
+
+  end subroutine
+
   subroutine NullInitial(particle, fields, run_data)
     ! Initialises the input Particle and Fields objects based on "Null" initial condition specification
     type(ParticleType), intent(inout) :: particle
@@ -64,8 +97,7 @@ module GlobalUtils
     
     ! Keep all field attributes set to zero everywhere
     ! Set particle intitial velocity to be (0.1, 0.1)
-    particle%vel(0, 0) = 0.1_REAL64
-    particle%vel(0, 1) = 0.1_REAL64
+    particle%vel(0, :) = (/0.1_REAL64, 0.1_REAL64/)
     
   end subroutine
 

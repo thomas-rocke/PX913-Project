@@ -5,7 +5,7 @@ program main
   use GlobalUtils
   use FieldSolver
   use ParticleSolver
-  use PathWriter
+  use PIFWriter
 
   implicit none
 
@@ -16,7 +16,7 @@ program main
   Run_Data%nx = 10
   Run_Data%ny = 10
   
-  call NullInitial(particle, Fields, Run_Data)
+  call SingleInitial(particle, Fields, Run_Data)
   call Get_Field(Fields)
   
   Print *, Fields%E((/0.0_REAL64, 0.0_REAL64/))
