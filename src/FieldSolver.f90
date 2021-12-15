@@ -110,7 +110,7 @@ module FieldSolver
 
     Guarded_phi(1:size(Fields%phi, 1), 1:size(Fields%phi, 2)) = Fields%phi
 
-    !$omp parallel do private(i) shared(Fields%phi, Guarded_phi)
+    !$omp parallel do private(i) shared(Fields, Guarded_phi)
     do j=1, size(Fields%phi, 2)
       do i=1, size(Fields%phi, 1)
         Fields%Ex(i, j) = (Guarded_phi(i+1, j) - Guarded_phi(i-1, j)) * 0.5_REAL64 * inv_dx
@@ -130,7 +130,7 @@ module FieldSolver
 
     Guarded_phi(1:size(Fields%phi, 1), 1:size(Fields%phi, 2)) = Fields%phi
 
-    !$omp parallel do private(i) shared(Fields%phi, Guarded_phi)
+    !$omp parallel do private(i) shared(Fields, Guarded_phi)
     do j=1, size(Fields%phi, 2)
       do i=1, size(Fields%phi, 1)
         Fields%Ey(i, j) = (Guarded_phi(i, j+1) - Guarded_phi(i, j-1)) * 0.5_REAL64 * inv_dy
@@ -213,25 +213,3 @@ module FieldSolver
   end function
 
 end module FieldSolver
-
-program TestField
-  use ISO_FORTRAN_ENV
-  use GlobalUtils
-  use FieldSolver
-
-  implicit none
-
-  type(RunData) :: Run_Data
-  type(FieldType) :: Fields
-  type(ParticleType) :: particle
-
-  Run_Data%nx = 10
-  Run_Data%ny = 10
-  
-  call NullInitial(particle, Fields, Run_Data)
-  call Get_Field(Fields)
-  
-  Print *, Fields%E((/0.0_REAL64, 0.0_REAL64/))
-
-
-end program
