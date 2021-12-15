@@ -9,7 +9,7 @@ module GlobalUtils
   implicit none
   
   private
-  public RunData, ParticleType, FieldType, NullInitial
+  public RunData, ParticleType, FieldType, NullInitial, SingleInitial
 
   ! ################
   ! # CUSTOM TYPES #
@@ -90,7 +90,7 @@ module GlobalUtils
 
     nx = run_data%nx
     ny = run_data%ny
-    num_timesteps = run_data % numTimesteps
+    num_timesteps = run_data%numTimesteps
 
 
     call CleanAndAllocate(particle, fields, nx, ny, num_timesteps)

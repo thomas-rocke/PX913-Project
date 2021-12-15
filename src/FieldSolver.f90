@@ -41,6 +41,7 @@ module FieldSolver
     inv_dx_square = inv_dx * inv_dx
     inv_dy_square = inv_dy * inv_dy
 
+
     if (present(tolerance)) then
       err_tol = tolerance
     else 
@@ -87,7 +88,7 @@ module FieldSolver
     do j=1, n_y
       do i=1,n_x
         ! Compute the 2nd order total derivative of phi at position (i, j)
-        deriv = Total_Deriv_2D(phi(i-1:i+1, j-1:j+1), inv_dx_square, inv_dy_square)
+        deriv = (phi(i+1, j) + phi(i-1, j))*inv_dx_square + (phi(i, j+1) + phi(i, j-1))*inv_dy_square
         phi(i, j) = inv_denom * (deriv - rho(i, j))
       end do
     end do
@@ -188,7 +189,7 @@ module FieldSolver
       end do
     end do
 
-    d_rms = sqrt(sum(deriv)/N)
+    d_rms = sqrt(abs(sum(deriv)/N))
   end function
 
   ! ################
@@ -205,8 +206,8 @@ module FieldSolver
     real(kind=REAL64) :: x_part, y_part, deriv
 
     ! Finite differences for d^2f(i, j)/dx^2 approx (f(i+1, j) + f(i-1, j))/(dx^2)
-    x_part = (Neighbour_rarr(1, 2) + Neighbour_rarr(3, 2)) * inv_dx_square
-    y_part = (Neighbour_rarr(2, 1) + Neighbour_rarr(2, 3)) * inv_dy_square
+    x_part = (Neighbour_rarr(1, 2) + Neighbour_rarr(3, 2) - 2*Neighbour_rarr(2, 2)) * inv_dx_square
+    y_part = (Neighbour_rarr(2, 1) + Neighbour_rarr(2, 3) - 2*Neighbour_rarr(2, 2)) * inv_dy_square
 
     ! Sum to find total derivative
     deriv = x_part + y_part
