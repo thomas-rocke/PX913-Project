@@ -1,9 +1,9 @@
 ! NetCDF writer class for writing Electric Field and Particle Path properties
 
 module PIFWriter
-  implicit none
   !use NetCDF
   use GlobalUtils
+  implicit none
   contains
   
   subroutine OpenFile(filename, lun)
