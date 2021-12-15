@@ -110,7 +110,7 @@ module FieldSolver
 
     Guarded_phi(1:size(Fields%phi, 1), 1:size(Fields%phi, 2)) = Fields%phi
 
-    !$omp parallel do private(i) shared(Fields%phi, Guarded_phi)
+    !$omp parallel do private(i) shared(Fields, Guarded_phi)
     do j=1, size(Fields%phi, 2)
       do i=1, size(Fields%phi, 1)
         Fields%Ex(i, j) = (Guarded_phi(i+1, j) - Guarded_phi(i-1, j)) * 0.5_REAL64 * inv_dx
@@ -130,7 +130,7 @@ module FieldSolver
 
     Guarded_phi(1:size(Fields%phi, 1), 1:size(Fields%phi, 2)) = Fields%phi
 
-    !$omp parallel do private(i) shared(Fields%phi, Guarded_phi)
+    !$omp parallel do private(i) shared(Fields, Guarded_phi)
     do j=1, size(Fields%phi, 2)
       do i=1, size(Fields%phi, 1)
         Fields%Ey(i, j) = (Guarded_phi(i, j+1) - Guarded_phi(i, j-1)) * 0.5_REAL64 * inv_dy
