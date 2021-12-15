@@ -5,7 +5,7 @@ program main
   use GlobalUtils
   use FieldSolver
   use ParticleSolver
-  use PathWriter
+  use PIFWriter
 
   implicit none
 
@@ -13,13 +13,14 @@ program main
   type(FieldType) :: Fields
   type(ParticleType) :: particle
 
-  Run_Data%nx = 10
-  Run_Data%ny = 10
+  Run_Data%nx = 100
+  Run_Data%ny = 100
+  Run_Data%numTimesteps = 1000
   
-  call NullInitial(particle, Fields, Run_Data)
+  call SingleInitial(particle, Fields, Run_Data)
   call Get_Field(Fields)
   
-  Print *, Fields%E((/0.0_REAL64, 0.0_REAL64/))
+  Print *, Fields%dx
 
 
 
