@@ -47,6 +47,26 @@ module GlobalUtils
   ! # INITIAL CONDITIONS PROCEDURES #
   ! #################################
 
+  subroutine SelectConditions(requestedState, particle, fields, run_data)
+    ! Selects which initialisation subroutine to use to initialise particle and fields
+    character(len=*), intent(in) :: requestedState
+    type(ParticleType), intent(inout) :: particle
+    type(FieldType), intent(inout) :: fields
+    type(runData), intent(in) :: run_data
+
+    select case (to_upper(requestedState))
+      case ("NULL")
+        call NullInitial(particle, fields, run_data)
+      
+      case ("SINGLE")
+        call SingleInitial(particle, fields, run_data)
+      
+      case default
+        print *, "ERROR: '", requestedState, "' not a recognised initial state"
+        stop "ABORT"
+    end select
+  end subroutine
+
   subroutine SingleInitial(particle, fields, run_data)
     ! Initialises the input Particle and Fields objects based on "Single" initial condition specification
     type(ParticleType), intent(inout) :: particle
@@ -173,4 +193,27 @@ module GlobalUtils
     fields%Ey = 0_REAL64
   end subroutine
 
+
+  ! ###################
+  ! # MISC PROCEDURES #
+  ! ###################
+
+  elemental function to_upper(lower) result(upper)
+    ! Converts character to upper case
+    character, intent(in) :: lower
+    character :: upper
+
+    ! ASCII Integer representations of lower, "a", and "z"
+    integer :: int_lower
+    integer, parameter :: int_a = iachar("a"), int_z = iachar("z")
+
+
+    int_lower = iachar(lower)
+    upper = lower
+    if (int_lower>= int_a .and. int_lower <= int_z ) then
+      ! lower is a-z (can be capitalised)
+      ! ASCII convention that lower and upper cases are 32 characters apart
+      upper = achar(int_lower-32)
+    end if
+  end function
 end module GlobalUtils

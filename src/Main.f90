@@ -13,11 +13,13 @@ program main
   type(FieldType) :: Fields
   type(ParticleType) :: particle
 
+  integer :: nx, ny, numTimesteps
+
   Run_Data%nx = 100
   Run_Data%ny = 100
   Run_Data%numTimesteps = 1000
   
-  call SingleInitial(particle, Fields, Run_Data)
+  call SelectConditions("single", particle, Fields, Run_Data)
   call Get_Field(Fields)
   
   Print *, Fields%dx
