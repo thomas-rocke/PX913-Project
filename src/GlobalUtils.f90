@@ -9,7 +9,7 @@ module GlobalUtils
   implicit none
   
   private
-  public RunData, ParticleType, FieldType, NullInitial, SingleInitial
+  public RunData, ParticleType, FieldType, SelectConditions
 
   ! ################
   ! # CUSTOM TYPES #
@@ -198,22 +198,25 @@ module GlobalUtils
   ! # MISC PROCEDURES #
   ! ###################
 
-  elemental function to_upper(lower) result(upper)
-    ! Converts character to upper case
-    character, intent(in) :: lower
-    character :: upper
-
-    ! ASCII Integer representations of lower, "a", and "z"
-    integer :: int_lower
+  function to_upper(lower) result(upper)
+    ! Converts character string to upper case
+    ! Via ASCII representation
+    ! Adapted from http://www.star.le.ac.uk/~cgp/fortran.html
+    ! Original author: Clive Page
+    character(len=*), intent(in) :: lower
+    character(len=len(lower)) :: upper
+    integer :: i, int_i ! integer representation of the ith character
     integer, parameter :: int_a = iachar("a"), int_z = iachar("z")
 
-
-    int_lower = iachar(lower)
     upper = lower
-    if (int_lower>= int_a .and. int_lower <= int_z ) then
-      ! lower is a-z (can be capitalised)
-      ! ASCII convention that lower and upper cases are 32 characters apart
-      upper = achar(int_lower-32)
-    end if
-  end function
+    do i = 1, len(lower)
+      int_i = iachar(lower(i:i))
+      ! Test if ith character is between a-z
+      if (int_i>= int_a .and. int_i<=int_z ) then
+        ! Uppercase ASCII is 32 characters from lowercase
+        upper(i:i) = achar(int_i-32)
+      end if
+    end do
+  end function to_upper
+
 end module GlobalUtils
