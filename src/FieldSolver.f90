@@ -213,25 +213,3 @@ module FieldSolver
   end function
 
 end module FieldSolver
-
-program TestField
-  use ISO_FORTRAN_ENV
-  use GlobalUtils
-  use FieldSolver
-
-  implicit none
-
-  type(RunData) :: Run_Data
-  type(FieldType) :: Fields
-  type(ParticleType) :: particle
-
-  Run_Data%nx = 10
-  Run_Data%ny = 10
-  
-  call NullInitial(particle, Fields, Run_Data)
-  call Get_Field(Fields)
-  
-  Print *, Fields%E((/0.0_REAL64, 0.0_REAL64/))
-
-
-end program
