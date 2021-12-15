@@ -1,0 +1,35 @@
+#!/bin/bash
+# Based on build_ncdf from Workshop 7
+
+
+#### COMMAND LINE ARGS ####
+# Can be modified to change game system
+
+# TODO: CMD LINE INTEGRATION
+
+#### COMPILE #### 
+
+echo "Compiling Code"
+# File dependancy chain
+myprogramfiles="src/create_axis.f90 src/GlobalUtils.f90 src/FieldSolver.f90 src/ParticleSolver.f90 src/PathWriter.f90 src/Main.f90"
+
+#Name of compiled file
+outfile="ParticleSim.exe"
+
+#Name of compiler
+fc=gfortran
+#Use nf-config to grab the compile and link flags. Backticks run command and grab output
+fflags=`nf-config --fflags`
+flibs=`nf-config --flibs`
+
+#Compile Line
+$fc -g -std=f2008 $fflags $myprogramfiles $flibs -o $outfile -fopenmp
+
+#### EXECUTE COMPILED CODE ####
+echo "Executing compiled code"
+# Uses Command Line Args defined above
+./$outfile
+
+#### EXECUTE PYTHON VISUALISATION ####
+echo "Executing Python visualisation"
+python3 src/DataVis.py
