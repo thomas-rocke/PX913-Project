@@ -5,7 +5,7 @@
 #### COMMAND LINE ARGS ####
 # Can be modified to change system
 
-problem="null"
+problem="single"
 nx=100
 ny=100
 
@@ -13,10 +13,10 @@ ny=100
 
 echo "Compiling Code"
 # File dependancy chain
-myprogramfiles="src/command_line.f90 src/create_axis.f90 src/GlobalUtils.f90 src/FieldSolver.f90 src/ParticleSolver.f90 src/PIFWriter.f90 src/Main.f90"
+myprogramfiles="../src/command_line.f90 ../src/create_axis.f90 ../src/GlobalUtils.f90 ../src/FieldSolver.f90 ../src/ParticleSolver.f90 ../src/PIFWriter.f90 ../src/Main.f90"
 
 #Name of compiled file
-outfile="ParticleSim.exe"
+outfile="Sim_Profile.exe"
 
 #Name of compiler
 fc=gfortran
@@ -25,13 +25,11 @@ fflags=`nf-config --fflags`
 flibs=`nf-config --flibs`
 
 #Compile Line
-$fc -g -std=f2008 $fflags $myprogramfiles $flibs -o $outfile -fopenmp
+$fc -g -std=f2008 $fflags $myprogramfiles $flibs -o $outfile -Wall -pg
 
 #### EXECUTE COMPILED CODE ####
 echo "Executing compiled code"
 # Uses Command Line Args defined above
 ./$outfile nx=$nx ny=$ny problem=$problem
 
-#### EXECUTE PYTHON VISUALISATION ####
-echo "Executing Python visualisation"
-python3 src/DataVis.py
+gprof ./$outfile > profile.txt

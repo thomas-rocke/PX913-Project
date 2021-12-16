@@ -11,3 +11,4 @@
 ###### MISC #####
 .vscode
 *.exe
+build_scripts/gmon.out

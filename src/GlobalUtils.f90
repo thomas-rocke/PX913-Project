@@ -63,7 +63,7 @@ module GlobalUtils
       
       case default
         print *, "ERROR: '", requestedState, "' not a recognised initial state"
-        stop "ABORT"
+        stop
     end select
   end subroutine
 
