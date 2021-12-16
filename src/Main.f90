@@ -35,8 +35,10 @@ program main
     stop
   end if
 
-  call SelectConditions("single", particle, Fields, Run_Data)
+  call SelectConditions(sysType, particle, Fields, Run_Data)
   call Get_Field(Fields)
+
+  
   
   Print *, Fields%E((/0.0_REAL64, 3.0_REAL64/))
 
