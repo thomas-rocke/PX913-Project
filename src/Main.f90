@@ -32,7 +32,7 @@ program main
     if (.NOT. nyPresent) print *, "ERROR: Command line argument ny not found"
     if (.NOT. typePresent) print *, "ERROR: Command line argument problem not found"
     print *, "ERROR: Required args missing, aborting"
-    stop "ABORT"
+    stop
   end if
 
   call SelectConditions("single", particle, Fields, Run_Data)

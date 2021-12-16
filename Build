@@ -3,9 +3,11 @@
 
 
 #### COMMAND LINE ARGS ####
-# Can be modified to change game system
+# Can be modified to change system
 
-# TODO: CMD LINE INTEGRATION
+problem="single"
+nx=100
+ny=100
 
 #### COMPILE #### 
 
