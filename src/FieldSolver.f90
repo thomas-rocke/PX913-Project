@@ -14,7 +14,7 @@ module FieldSolver
   ! ####################
   ! # MODULE VARIABLES #
   ! ####################
-  real(kind=REAL64), parameter :: DEFAULT_TOLERANCE = 1e-4
+  real(kind=REAL64), parameter :: DEFAULT_TOLERANCE = 10.0_REAL64
   integer, parameter :: DEFAULT_MAX_ITERS = 20000
 
   contains
