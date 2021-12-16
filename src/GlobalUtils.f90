@@ -9,7 +9,7 @@ module GlobalUtils
   implicit none
   
   private
-  public RunData, ParticleType, FieldType, NullInitial, SingleInitial
+  public RunData, ParticleType, FieldType, SelectConditions
 
   ! ################
   ! # CUSTOM TYPES #
@@ -46,6 +46,26 @@ module GlobalUtils
   ! #################################
   ! # INITIAL CONDITIONS PROCEDURES #
   ! #################################
+
+  subroutine SelectConditions(requestedState, particle, fields, run_data)
+    ! Selects which initialisation subroutine to use to initialise particle and fields
+    character(len=*), intent(in) :: requestedState
+    type(ParticleType), intent(inout) :: particle
+    type(FieldType), intent(inout) :: fields
+    type(runData), intent(in) :: run_data
+
+    select case (to_upper(requestedState))
+      case ("NULL")
+        call NullInitial(particle, fields, run_data)
+      
+      case ("SINGLE")
+        call SingleInitial(particle, fields, run_data)
+      
+      case default
+        print *, "ERROR: '", requestedState, "' not a recognised initial state"
+        stop "ABORT"
+    end select
+  end subroutine
 
   subroutine SingleInitial(particle, fields, run_data)
     ! Initialises the input Particle and Fields objects based on "Single" initial condition specification
@@ -108,19 +128,26 @@ module GlobalUtils
   function Get_E_At_Pos(fields, position) result(E_field)
     ! Gets the electric field strength (E_x, E_y) at position (x, y)
     ! Given the fields object
-    ! ASSUMES SPATIAL DOMAIN OF (-1.0, 1.0)
+    ! ASSUMES SPATIAL DOMAIN OF (-1.0, 1.0) IN BOTH X AND Y
     class(FieldType), intent(in) :: fields
     real(kind=REAL64), dimension(2), intent(in) :: position
     real(kind=REAL64), dimension(2) :: E_field
     integer :: x_index, y_index
 
-    ! Get closest indeces corresponding to position on grid
-    x_index = floor((position(1) - 1.0_REAL64)/fields%dx) + 1
-    y_index = floor((position(2) - 1.0_REAL64)/fields%dy) + 1
+    ! Default behaviour
+    E_field = 0.0_REAL64
+    
+    if (abs(position(1)) <= 1.0_REAL64 .AND. abs(position(2)) <= 1.0_REAL64) then
+      ! position is within the defined E field domain
+    
+      ! Get closest indeces corresponding to position on grid
+      x_index = floor((position(1) - 1.0_REAL64)/fields%dx) + 1
+      y_index = floor((position(2) - 1.0_REAL64)/fields%dy) + 1
 
-    ! Populate E_field with closest Ex and Ey grid cells
-    E_field(1) = fields%Ex(x_index, y_index)
-    E_field(2) = fields%Ey(x_index, y_index)
+      ! Populate E_field with closest Ex and Ey grid cells
+      E_field(1) = fields%Ex(x_index, y_index)
+      E_field(2) = fields%Ey(x_index, y_index)
+    end if
   end function
 
   ! ######################################
@@ -172,5 +199,31 @@ module GlobalUtils
     fields%Ex = 0_REAL64
     fields%Ey = 0_REAL64
   end subroutine
+
+
+  ! ###################
+  ! # MISC PROCEDURES #
+  ! ###################
+
+  function to_upper(lower) result(upper)
+    ! Converts character string to upper case
+    ! Via ASCII representation
+    ! Adapted from http://www.star.le.ac.uk/~cgp/fortran.html
+    ! Original author: Clive Page
+    character(len=*), intent(in) :: lower
+    character(len=len(lower)) :: upper
+    integer :: i, int_i ! integer representation of the ith character
+    integer, parameter :: int_a = iachar("a"), int_z = iachar("z")
+
+    upper = lower
+    do i = 1, len(lower)
+      int_i = iachar(lower(i:i))
+      ! Test if ith character is between a-z
+      if (int_i>= int_a .and. int_i<=int_z ) then
+        ! Uppercase ASCII is 32 characters from lowercase
+        upper(i:i) = achar(int_i-32)
+      end if
+    end do
+  end function to_upper
 
 end module GlobalUtils
