@@ -128,19 +128,26 @@ module GlobalUtils
   function Get_E_At_Pos(fields, position) result(E_field)
     ! Gets the electric field strength (E_x, E_y) at position (x, y)
     ! Given the fields object
-    ! ASSUMES SPATIAL DOMAIN OF (-1.0, 1.0)
+    ! ASSUMES SPATIAL DOMAIN OF (-1.0, 1.0) IN BOTH X AND Y
     class(FieldType), intent(in) :: fields
     real(kind=REAL64), dimension(2), intent(in) :: position
     real(kind=REAL64), dimension(2) :: E_field
     integer :: x_index, y_index
 
-    ! Get closest indeces corresponding to position on grid
-    x_index = floor((position(1) - 1.0_REAL64)/fields%dx) + 1
-    y_index = floor((position(2) - 1.0_REAL64)/fields%dy) + 1
+    ! Default behaviour
+    E_field = 0.0_REAL64
+    
+    if (abs(position(1)) <= 1.0_REAL64 .AND. abs(position(2)) <= 1.0_REAL64) then
+      ! position is within the defined E field domain
+    
+      ! Get closest indeces corresponding to position on grid
+      x_index = floor((position(1) - 1.0_REAL64)/fields%dx) + 1
+      y_index = floor((position(2) - 1.0_REAL64)/fields%dy) + 1
 
-    ! Populate E_field with closest Ex and Ey grid cells
-    E_field(1) = fields%Ex(x_index, y_index)
-    E_field(2) = fields%Ey(x_index, y_index)
+      ! Populate E_field with closest Ex and Ey grid cells
+      E_field(1) = fields%Ex(x_index, y_index)
+      E_field(2) = fields%Ey(x_index, y_index)
+    end if
   end function
 
   ! ######################################
