@@ -30,7 +30,7 @@ $fc -g -std=f2008 $fflags $myprogramfiles $flibs -o $outfile -fopenmp
 #### EXECUTE COMPILED CODE ####
 echo "Executing compiled code"
 # Uses Command Line Args defined above
-./$outfile
+./$outfile nx=$nx ny=$ny problem=$problem
 
 #### EXECUTE PYTHON VISUALISATION ####
 echo "Executing Python visualisation"
