@@ -38,7 +38,7 @@ program main
   call SelectConditions("single", particle, Fields, Run_Data)
   call Get_Field(Fields)
   
-  Print *, Fields%dx
+  Print *, Fields%E((/0.0_REAL64, 3.0_REAL64/))
 
 
 

@@ -6,8 +6,8 @@
 # Can be modified to change system
 
 problem="null"
-nx=100
-ny=100
+nx=10
+ny=10
 
 #### COMPILE #### 
 
