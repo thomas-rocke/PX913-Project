@@ -60,11 +60,54 @@ module GlobalUtils
       
       case ("SINGLE")
         call SingleInitial(particle, fields, run_data)
+
+      case ("DOUBLE")
+        call DoubleInitial(particle, fields, run_data)
       
       case default
         print *, "ERROR: '", requestedState, "' not a recognised initial state"
         stop
     end select
+  end subroutine
+
+  subroutine DoubleInitial(particle, fields, run_data)
+    ! Initialises the input Particle and Fields objects based on "Double" initial condition specification
+    type(ParticleType), intent(inout) :: particle
+    type(FieldType), intent(inout) :: fields
+    type(runData), intent(in) :: run_data
+
+    integer :: nx, ny, num_timesteps, i, j
+    real(kind=REAL64) :: x1, y1, x2, y2, x1_exp, y1_exp, x2_exp, y2_exp
+
+    nx = run_data%nx
+    ny = run_data%ny
+    num_timesteps = run_data % numTimesteps
+
+    call CleanAndAllocate(particle, fields, nx, ny, num_timesteps)
+
+    ! Initial conditions on the particle
+    particle%pos(0, :) = (/0.1_REAL64, 0.0_REAL64/)
+
+    ! Initial conditions on rho
+    ! rho(x, y) = exp(-((x+0.25)/0.1)^2 - ((y+0.25)/0.1)^2) + exp(-((x-0.75)/0.2)^2 - ((y-0.75)/0.2)^2)
+    ! (x1, y1) = (x, y) + 0.25
+    ! (x2, y2) = (x, y) - 0.75
+    !$omp parallel do private(i, x, y, x1_exp, y1_exp, x2_exp, y2_exp) shared(fields)
+    do j=1, ny
+      y1 = j*fields%dy - 1.0_REAL64 + 0.25_REAL64
+      y2 = j*fields%dy - 1.0_REAL64 - 0.75_REAL64
+      y1_exp = exp(-(100.0_REAL64 * y1 * y1))
+      y2_exp = exp(-(400.0_REAL64 * y2 * y2))
+
+      do i=1, nx
+        x1 = i*fields%dx - 1.0_REAL64 + 0.25_REAL64
+        x2 = i*fields%dx - 1.0_REAL64 - 0.75_REAL64
+        x1_exp = exp(-(100.0_REAL64 * x1 * x1))
+        x2_exp = exp(-(400.0_REAL64 * x2 * x2))
+        fields%rho(i, j) = x1_exp * y1_exp + x2_exp * y2_exp
+      end do
+    end do
+
   end subroutine
 
   subroutine SingleInitial(particle, fields, run_data)
