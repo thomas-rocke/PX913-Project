@@ -92,7 +92,7 @@ module GlobalUtils
     ! rho(x, y) = exp(-((x+0.25)/0.1)^2 - ((y+0.25)/0.1)^2) + exp(-((x-0.75)/0.2)^2 - ((y-0.75)/0.2)^2)
     ! (x1, y1) = (x, y) + 0.25
     ! (x2, y2) = (x, y) - 0.75
-    !$omp parallel do private(i, x, y, x1_exp, y1_exp, x2_exp, y2_exp) shared(fields)
+    !$omp parallel do private(i, x1, y1, x2, y2, x1_exp, y1_exp, x2_exp, y2_exp) shared(fields)
     do j=1, ny
       y1 = j*fields%dy - 1.0_REAL64 + 0.25_REAL64
       y2 = j*fields%dy - 1.0_REAL64 - 0.75_REAL64
