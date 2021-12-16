@@ -86,7 +86,7 @@ module GlobalUtils
     call CleanAndAllocate(particle, fields, nx, ny, num_timesteps)
 
     ! Initial conditions on the particle
-    particle%pos(0, :) = (/0.1_REAL64, 0.0_REAL64/)
+    particle%pos(0, :) = (/0.0_REAL64, 0.5_REAL64/)
 
     ! Initial conditions on rho
     ! rho(x, y) = exp(-((x+0.25)/0.1)^2 - ((y+0.25)/0.1)^2) + exp(-((x-0.75)/0.2)^2 - ((y-0.75)/0.2)^2)
@@ -97,13 +97,13 @@ module GlobalUtils
       y1 = j*fields%dy - 1.0_REAL64 + 0.25_REAL64
       y2 = j*fields%dy - 1.0_REAL64 - 0.75_REAL64
       y1_exp = exp(-(100.0_REAL64 * y1 * y1))
-      y2_exp = exp(-(400.0_REAL64 * y2 * y2))
+      y2_exp = exp(-(25.0_REAL64 * y2 * y2))
 
       do i=1, nx
         x1 = i*fields%dx - 1.0_REAL64 + 0.25_REAL64
         x2 = i*fields%dx - 1.0_REAL64 - 0.75_REAL64
         x1_exp = exp(-(100.0_REAL64 * x1 * x1))
-        x2_exp = exp(-(400.0_REAL64 * x2 * x2))
+        x2_exp = exp(-(25.0_REAL64 * x2 * x2))
         fields%rho(i, j) = x1_exp * y1_exp + x2_exp * y2_exp
       end do
     end do
