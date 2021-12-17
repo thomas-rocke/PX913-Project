@@ -1,0 +1,55 @@
+../src/PIFWriter.f90:36:26:
+
+   36 |   subroutine CloseFile(lun)
+      |                          1
+Warning: Unused dummy argument ‘lun’ at (1) [-Wunused-dummy-argument]
+../src/PIFWriter.f90:30:30:
+
+   30 |   subroutine WriteParticle(lun, Particle)
+      |                              1
+Warning: Unused dummy argument ‘lun’ at (1) [-Wunused-dummy-argument]
+../src/PIFWriter.f90:30:40:
+
+   30 |   subroutine WriteParticle(lun, Particle)
+      |                                        1
+Warning: Unused dummy argument ‘particle’ at (1) [-Wunused-dummy-argument]
+../src/PIFWriter.f90:24:36:
+
+   24 |   subroutine WriteFields(lun, Fields)
+      |                                    1
+Warning: Unused dummy argument ‘fields’ at (1) [-Wunused-dummy-argument]
+../src/PIFWriter.f90:24:28:
+
+   24 |   subroutine WriteFields(lun, Fields)
+      |                            1
+Warning: Unused dummy argument ‘lun’ at (1) [-Wunused-dummy-argument]
+../src/PIFWriter.f90:16:47:
+
+   16 |   subroutine MakeMetaData(lun, Run_Data, Fields, Particle)
+      |                                               1
+Warning: Unused dummy argument ‘fields’ at (1) [-Wunused-dummy-argument]
+../src/PIFWriter.f90:16:29:
+
+   16 |   subroutine MakeMetaData(lun, Run_Data, Fields, Particle)
+      |                             1
+Warning: Unused dummy argument ‘lun’ at (1) [-Wunused-dummy-argument]
+../src/PIFWriter.f90:16:57:
+
+   16 |   subroutine MakeMetaData(lun, Run_Data, Fields, Particle)
+      |                                                         1
+Warning: Unused dummy argument ‘particle’ at (1) [-Wunused-dummy-argument]
+../src/PIFWriter.f90:16:39:
+
+   16 |   subroutine MakeMetaData(lun, Run_Data, Fields, Particle)
+      |                                       1
+Warning: Unused dummy argument ‘run_data’ at (1) [-Wunused-dummy-argument]
+../src/PIFWriter.f90:9:30:
+
+    9 |   subroutine OpenFile(filename, lun)
+      |                              1
+Warning: Unused dummy argument ‘filename’ at (1) [-Wunused-dummy-argument]
+../src/PIFWriter.f90:9:35:
+
+    9 |   subroutine OpenFile(filename, lun)
+      |                                   1
+Warning: Dummy argument ‘lun’ at (1) was declared INTENT(OUT) but was not set [-Wunused-dummy-argument]

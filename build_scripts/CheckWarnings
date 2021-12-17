@@ -5,9 +5,9 @@
 #### COMMAND LINE ARGS ####
 # Can be modified to change system
 
-problem="single"
-nx=100
-ny=100
+problem="null"
+nx=10
+ny=10
 
 #### COMPILE #### 
 
@@ -16,7 +16,7 @@ echo "Compiling Code"
 myprogramfiles="../src/command_line.f90 ../src/create_axis.f90 ../src/GlobalUtils.f90 ../src/FieldSolver.f90 ../src/ParticleSolver.f90 ../src/PIFWriter.f90 ../src/Main.f90"
 
 #Name of compiled file
-outfile="Sim_Profile.exe"
+outfile="Sim_Memcheck.exe"
 
 #Name of compiler
 fc=gfortran
@@ -25,11 +25,10 @@ fflags=`nf-config --fflags`
 flibs=`nf-config --flibs`
 
 #Compile Line
-$fc -g -std=f2008 $fflags $myprogramfiles $flibs -o $outfile -pg
+$fc -g -std=f2008 $fflags $myprogramfiles $flibs -o $outfile -Wall 2> Warnings.txt
 
 #### EXECUTE COMPILED CODE ####
 echo "Executing compiled code"
 # Uses Command Line Args defined above
 ./$outfile nx=$nx ny=$ny problem=$problem
 
-gprof ./$outfile > profile.txt
