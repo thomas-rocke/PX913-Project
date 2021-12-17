@@ -25,7 +25,7 @@ fflags=`nf-config --fflags`
 flibs=`nf-config --flibs`
 
 #Compile Line
-$fc -g -std=f2008 $fflags $myprogramfiles $flibs -o $outfile -Wall -pg
+$fc -g -std=f2008 $fflags $myprogramfiles $flibs -o $outfile -pg
 
 #### EXECUTE COMPILED CODE ####
 echo "Executing compiled code"
