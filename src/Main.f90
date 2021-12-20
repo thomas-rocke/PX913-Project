@@ -17,6 +17,8 @@ program main
   character(len=10) :: sysType
   logical :: nxPresent, nyPresent, typePresent
 
+  integer :: id
+
 
   call parse_args() ! Get all command line args
 
@@ -38,8 +40,8 @@ program main
   call SelectConditions(sysType, particle, Fields, Run_Data)
   call Get_Field(Fields)
 
-  
-  
+  call OpenFile(Run_Data, id)
+
   Print *, Fields%E((/0.0_REAL64, 3.0_REAL64/))
 
 

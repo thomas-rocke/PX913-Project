@@ -25,6 +25,7 @@ module GlobalUtils
   type :: RunData
     integer :: nx, ny, numTimesteps = DEFAULT_NUM_TIMESTEPS
     real(kind=REAL64) :: dt = DEFAULT_DT
+    character(len=10) :: problem
   end type
 
   type :: ParticleType
@@ -56,16 +57,19 @@ module GlobalUtils
     character(len=*), intent(in) :: requestedState
     type(ParticleType), intent(inout) :: particle
     type(FieldType), intent(inout) :: fields
-    type(runData), intent(in) :: run_data
+    type(runData), intent(inout) :: run_data
 
     select case (to_upper(requestedState))
       case ("NULL")
+        run_data%problem = "Null"
         call NullInitial(particle, fields, run_data)
       
       case ("SINGLE")
+        run_data%problem = "Single"
         call SingleInitial(particle, fields, run_data)
 
       case ("DOUBLE")
+        run_data%problem = "Double"
         call DoubleInitial(particle, fields, run_data)
       
       case default

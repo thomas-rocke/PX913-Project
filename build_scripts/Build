@@ -15,7 +15,7 @@ success=0
 
 echo "Compiling Code"
 # File dependancy chain
-myprogramfiles="src/command_line.f90 src/create_axis.f90 src/GlobalUtils.f90 src/FieldSolver.f90 src/ParticleSolver.f90 src/PIFWriter.f90 src/Main.f90"
+myprogramfiles="../src/command_line.f90 ../src/create_axis.f90 ../src/GlobalUtils.f90 ../src/FieldSolver.f90 ../src/ParticleSolver.f90 ../src/PIFWriter.f90 ../src/Main.f90"
 
 #Name of compiled file
 outfile="ParticleSim.exe"
@@ -38,7 +38,7 @@ then
 
     #### EXECUTE PYTHON VISUALISATION ####
     echo "Executing Python visualisation"
-    python3 src/DataVis.py
+    python3 ../src/DataVis.py
 else
     echo "Compiling step failed. Aborting"
 fi
