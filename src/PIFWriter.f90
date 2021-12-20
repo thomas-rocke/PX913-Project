@@ -2,6 +2,7 @@
 
 module PIFWriter
   !use NetCDF
+  use ISO_FORTRAN_ENV
   use GlobalUtils
   implicit none
 
@@ -55,12 +56,6 @@ module PIFWriter
     fname = PATH // FILE_START // trim(Run_Data%problem) // ", nx=" // trim(str(Run_Data%nx)) // &
                   ", ny=" // trim(str(Run_Data%ny)) // FILE_EXTENSION
 
-    !
-    ! OPEN FILE
-    !
-
-    Print *, "Creating file ", fname
-
     ierr = nf90_create(trim(fname), NF90_CLOBBER, File_Data%file_id)
     IF (ierr /= nf90_noerr) THEN
         PRINT*, TRIM(nf90_strerror(ierr))
@@ -74,7 +69,8 @@ module PIFWriter
     type(RunData), intent(in) :: Run_Data
     type(FieldType), intent(in) :: Fields
     type(ParticleType), intent(in) :: Particle
-    integer :: ierr, x_axis_id, y_axis_id, id
+    integer :: ierr, x_axis_id, y_axis_id, id, i
+    real(kind=REAL64), dimension(0:Run_Data%numTimesteps) :: t_axis
 
     id = File_Data%file_id
 
@@ -124,7 +120,7 @@ module PIFWriter
     END IF
 
     ! xy_axis
-    ierr = nf90_def_dim(id, XYAXIS_NAME, 2, File_Data%xy_axis_id)
+    ierr = nf90_def_dim(id, XY_AXIS_NAME, 2, File_Data%xy_axis_id)
     IF (ierr /= nf90_noerr) THEN
         PRINT*, TRIM(nf90_strerror(ierr))
         RETURN
@@ -188,26 +184,124 @@ module PIFWriter
         PRINT*, TRIM(nf90_strerror(ierr))
         RETURN
     END IF
+
+    ! End NetCDF variable definitions
+    ierr = nf90_enddef(id)
+    IF (ierr /= nf90_noerr) THEN
+        PRINT*, TRIM(nf90_strerror(ierr))
+        RETURN
+    END IF
+
+    ! Populate Time axis
+    t_axis = 0.0_REAL64
+
+    do i=1, Run_Data%numTimesteps
+      t_axis(i) = i * Run_Data%dt
+    end do
+
+    ierr = nf90_put_var(id, File_Data%time_axis_id, t_axis)
+    IF (ierr /= nf90_noerr) THEN
+        PRINT*, TRIM(nf90_strerror(ierr))
+        RETURN
+    END IF
+
+    ! Populate xy axis
+    ierr = nf90_put_var(id, File_Data%xy_axis_id, (/"x", "y"/))
+    IF (ierr /= nf90_noerr) THEN
+        PRINT*, TRIM(nf90_strerror(ierr))
+        RETURN
+    END IF
   end subroutine
 
-  subroutine WriteFields(id, Fields)
+  subroutine WriteFields(File_Data, Fields)
     ! Writes all Fields data to the file
-    integer, intent(in) :: id
+    type(FileData), intent(in) :: File_Data
     type(FieldType), intent(in) :: Fields
-    integer :: ierr
+    integer :: ierr, id
+    id = File_Data%file_id
+
+    ! FILL IN AXES
+
+    ! x_axis
+    ierr = nf90_put_var(id, File_Data%x_axis_id, Fields%x_axis)
+    IF (ierr /= nf90_noerr) THEN
+        PRINT*, TRIM(nf90_strerror(ierr))
+        RETURN
+    END IF
+
+    ! y_axis
+    ierr = nf90_put_var(id, File_Data%y_axis_id, Fields%y_axis)
+    IF (ierr /= nf90_noerr) THEN
+        PRINT*, TRIM(nf90_strerror(ierr))
+        RETURN
+    END IF
+     
+    ! FILL IN MATRICES
+
+    ! rho
+    ierr = nf90_put_var(id, File_Data%rho_id, Fields%rho)
+    IF (ierr /= nf90_noerr) THEN
+        PRINT*, TRIM(nf90_strerror(ierr))
+        RETURN
+    END IF
+
+    ! phi
+    ierr = nf90_put_var(id, File_Data%phi_id, Fields%phi)
+    IF (ierr /= nf90_noerr) THEN
+        PRINT*, TRIM(nf90_strerror(ierr))
+        RETURN
+    END IF
+
+    ! E_x
+    ierr = nf90_put_var(id, File_Data%Ex_id, Fields%Ex)
+    IF (ierr /= nf90_noerr) THEN
+        PRINT*, TRIM(nf90_strerror(ierr))
+        RETURN
+    END IF
+
+    ! E_y
+    ierr = nf90_put_var(id, File_Data%Ey_id, Fields%Ey)
+    IF (ierr /= nf90_noerr) THEN
+        PRINT*, TRIM(nf90_strerror(ierr))
+        RETURN
+    END IF
+
   end subroutine
 
-  subroutine WriteParticle(id, Particle)
+  subroutine WriteParticle(File_Data, Particle)
     ! Writes all particle data to the file
-    integer, intent(in) :: id
+    type(FileData), intent(in) :: File_Data
     type(ParticleType), intent(in) :: Particle
-    integer :: ierr
+    integer :: ierr, id
+    id = File_Data%file_id
+
+    ! Pos
+    ierr = nf90_put_var(id, File_Data%Pos_id, Particle%pos)
+    IF (ierr /= nf90_noerr) THEN
+        PRINT*, TRIM(nf90_strerror(ierr))
+        RETURN
+    END IF
+
+    ! Vel
+    ierr = nf90_put_var(id, File_Data%Vel_id, Particle%vel)
+    IF (ierr /= nf90_noerr) THEN
+        PRINT*, TRIM(nf90_strerror(ierr))
+        RETURN
+    END IF
+
+    ! Acc
+    ierr = nf90_put_var(id, File_Data%Acc_id, Particle%acc)
+    IF (ierr /= nf90_noerr) THEN
+        PRINT*, TRIM(nf90_strerror(ierr))
+        RETURN
+    END IF
   end subroutine
 
-  subroutine CloseFile(id)
+  subroutine CloseFile(File_Data)
     ! Closes file given by id
-    integer, intent(in) :: id
-    integer :: ierr
+    type(FileData), intent(in) :: File_Data
+    integer :: ierr, id
+    id = File_Data%file_id
     ierr = nf90_close(id)
     IF (ierr /= nf90_noerr) THEN
         PRINT*, TRIM(nf90_strerror(ierr))
@@ -227,6 +321,7 @@ module PIFWriter
     ! Makes global attribute with name key
     character(len=*), intent(in) :: key
     integer, intent(in) :: val, file_id
+    integer :: ierr
 
     ierr = nf90_put_att(file_id, NF90_GLOBAL, key, val)
     IF (ierr /= nf90_noerr) THEN
@@ -240,6 +335,7 @@ module PIFWriter
     character(len=*), intent(in) :: key
     integer, intent(in) :: file_id
     real(kind=REAL64), intent(in) :: val
+    integer :: ierr
 
     ierr = nf90_put_att(file_id, NF90_GLOBAL, key, val)
     IF (ierr /= nf90_noerr) THEN
@@ -253,6 +349,7 @@ module PIFWriter
     character(len=*), intent(in) :: key
     integer, intent(in) :: file_id
     character(len=*), intent(in) :: val
+    integer :: ierr
 
     ierr = nf90_put_att(file_id, NF90_GLOBAL, key, val)
     IF (ierr /= nf90_noerr) THEN
