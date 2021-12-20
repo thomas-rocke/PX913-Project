@@ -1,14 +1,14 @@
 ! NetCDF writer class for writing Electric Field and Particle Path properties
 
 module PIFWriter
-  use NetCDF
+  !use NetCDF
   use GlobalUtils
   implicit none
 
 
   type :: FileData
-    integer :: file_id, x_axis_id, y_axis_id, time_axis_id, %
-          rho_id, phi_id, pos_id, vel_id, acc_id
+    integer :: file_id, x_axis_id, y_axis_id, time_axis_id, &
+          rho_id, phi_id, ex_id, ey_id, pos_id, vel_id, acc_id, xy_axis_id
   end type
 
   ! ####################
@@ -26,7 +26,7 @@ module PIFWriter
           DX_NAME = "dx", DY_NAME = "dy", TSTEP_NAME = "timesteps", DT_NAME = "dt"
   
   ! Axes
-  character(len=*), parameter :: XAXIS_NAME = "x_axis", YAXIS_NAME = "y_axis", TAXIS_NAME = "time"
+  character(len=*), parameter :: XAXIS_NAME = "x_axis", YAXIS_NAME = "y_axis", TAXIS_NAME = "time", XY_AXIS_NAME = "xy_axis"
   ! Fields
   character(len=*), parameter :: RHO_NAME = "ChargeDensity", PHI_NAME = "ElectricPotential", &
           EX_NAME = "E_x", EY_NAME = "E_y"
@@ -90,27 +90,104 @@ module PIFWriter
     call make_global(NY_NAME, Run_Data%ny, id)
 
     ! dx
-    call make_global(DX_NAME, Run_Data%dx, id)
+    call make_global(DX_NAME, Fields%dx, id)
 
     ! dy
-    call make_global(DY_NAME, Run_Data%dy, id)
+    call make_global(DY_NAME, Fields%dy, id)
 
     ! timesteps
-    call make_global(TSTEP_NAME, Run_Data%timesteps, id)
+    call make_global(TSTEP_NAME, Run_Data%numTimesteps, id)
 
     ! dt
     call make_global(DT_NAME, Run_Data%dt, id)
 
     ! AXES
     ! x_axis
-    ierr = nf90_def_dim(id, XAXIS_NAME, nx, x_axis_id)
+    ierr = nf90_def_dim(id, XAXIS_NAME, Run_Data%nx, File_Data%x_axis_id)
     IF (ierr /= nf90_noerr) THEN
         PRINT*, TRIM(nf90_strerror(ierr))
         RETURN
     END IF
 
+    ! y_axis
+    ierr = nf90_def_dim(id, YAXIS_NAME, Run_Data%ny, File_Data%y_axis_id)
+    IF (ierr /= nf90_noerr) THEN
+        PRINT*, TRIM(nf90_strerror(ierr))
+        RETURN
+    END IF
 
+    ! time_axis
+    ierr = nf90_def_dim(id, TAXIS_NAME, Run_Data%numTimesteps + 1, File_Data%time_axis_id)
+    IF (ierr /= nf90_noerr) THEN
+        PRINT*, TRIM(nf90_strerror(ierr))
+        RETURN
+    END IF
 
+    ! xy_axis
+    ierr = nf90_def_dim(id, XYAXIS_NAME, 2, File_Data%xy_axis_id)
+    IF (ierr /= nf90_noerr) THEN
+        PRINT*, TRIM(nf90_strerror(ierr))
+        RETURN
+    END IF
+
+    ! FIELDS MATRICES
+    
+    ! rho
+    ierr = nf90_def_var(id, RHO_NAME, NF90_REAL64, (/ File_Data%x_axis_id, &
+                        File_Data%y_axis_id /), File_Data%rho_id)
+    IF (ierr /= nf90_noerr) THEN
+        PRINT*, TRIM(nf90_strerror(ierr))
+        RETURN
+    END IF
+
+    ! phi
+    ierr = nf90_def_var(id, PHI_NAME, NF90_REAL64, (/ File_Data%x_axis_id, &
+                        File_Data%y_axis_id /), File_Data%phi_id)
+    IF (ierr /= nf90_noerr) THEN
+        PRINT*, TRIM(nf90_strerror(ierr))
+        RETURN
+    END IF
+
+    ! Ex
+    ierr = nf90_def_var(id, EX_NAME, NF90_REAL64, (/ File_Data%x_axis_id, &
+                        File_Data%y_axis_id /), File_Data%ex_id)
+    IF (ierr /= nf90_noerr) THEN
+        PRINT*, TRIM(nf90_strerror(ierr))
+        RETURN
+    END IF
+
+    ! Ey
+    ierr = nf90_def_var(id, EY_NAME, NF90_REAL64, (/ File_Data%x_axis_id, &
+                        File_Data%y_axis_id /), File_Data%ey_id)
+    IF (ierr /= nf90_noerr) THEN
+        PRINT*, TRIM(nf90_strerror(ierr))
+        RETURN
+    END IF
+
+    ! PARTICLE ARRAYS
+    ! Pos
+    ierr = nf90_def_var(id, POS_NAME, NF90_REAL64, (/ File_Data%time_axis_id, &
+                        File_Data%xy_axis_id /), File_Data%pos_id)
+    IF (ierr /= nf90_noerr) THEN
+        PRINT*, TRIM(nf90_strerror(ierr))
+        RETURN
+    END IF
+
+    ! Vel
+    ierr = nf90_def_var(id, VEL_NAME, NF90_REAL64, (/ File_Data%time_axis_id, &
+                        File_Data%xy_axis_id /), File_Data%vel_id)
+    IF (ierr /= nf90_noerr) THEN
+        PRINT*, TRIM(nf90_strerror(ierr))
+        RETURN
+    END IF
+
+    ! Acc
+    ierr = nf90_def_var(id, ACC_NAME, NF90_REAL64, (/ File_Data%time_axis_id, &
+                        File_Data%xy_axis_id /), File_Data%acc_id)
+    IF (ierr /= nf90_noerr) THEN
+        PRINT*, TRIM(nf90_strerror(ierr))
+        RETURN
+    END IF
   end subroutine
 
   subroutine WriteFields(id, Fields)
