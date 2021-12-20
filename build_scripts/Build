@@ -5,11 +5,12 @@
 #### COMMAND LINE ARGS ####
 # Can be modified to change system
 
-problem="null"
-nx=10
-ny=10
+problem="double"
+nx=100
+ny=100
 
 #### COMPILE #### 
+
 success=0
 
 echo "Compiling Code"
@@ -17,7 +18,7 @@ echo "Compiling Code"
 myprogramfiles="../src/command_line.f90 ../src/create_axis.f90 ../src/GlobalUtils.f90 ../src/FieldSolver.f90 ../src/ParticleSolver.f90 ../src/PIFWriter.f90 ../src/Main.f90"
 
 #Name of compiled file
-outfile="Sim_Memcheck.exe"
+outfile="ParticleSim.exe"
 
 #Name of compiler
 fc=gfortran
@@ -26,15 +27,18 @@ fflags=`nf-config --fflags`
 flibs=`nf-config --flibs`
 
 #Compile Line
-$fc -g -std=f2008 $fflags $myprogramfiles $flibs -o $outfile -g && success=1
+$fc -g -std=f2008 $fflags $myprogramfiles $flibs -o $outfile -fopenmp && success=1
 
-if [ $success -eq 1 ] 
+if [ $success -eq 1 ]
 then
     #### EXECUTE COMPILED CODE ####
     echo "Executing compiled code"
     # Uses Command Line Args defined above
-    valgrind --leak-check=full ./$outfile nx=$nx ny=$ny problem=$problem > MemTest.txt
+    ./$outfile nx=$nx ny=$ny problem=$problem
+
+    #### EXECUTE PYTHON VISUALISATION ####
+    echo "Executing Python visualisation"
+    python3 ../src/DataVis.py
 else
     echo "Compiling step failed. Aborting"
 fi
-

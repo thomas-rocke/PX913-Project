@@ -11,12 +11,21 @@ module GlobalUtils
   private
   public RunData, ParticleType, FieldType, SelectConditions
 
+  ! ####################
+  ! # GLOBAL VARIABLES #
+  ! ####################
+
+  real(kind=REAL64), parameter :: DEFAULT_DT = 0.01
+  integer, parameter :: DEFAULT_NUM_TIMESTEPS = 1000
+
   ! ################
   ! # CUSTOM TYPES #
   ! ################
 
   type :: RunData
-    integer :: nx, ny, numTimesteps
+    integer :: nx, ny, numTimesteps = DEFAULT_NUM_TIMESTEPS
+    real(kind=REAL64) :: dt = DEFAULT_DT
+    character(len=10) :: problem
   end type
 
   type :: ParticleType
@@ -36,10 +45,6 @@ module GlobalUtils
     procedure :: E => Get_E_At_Pos
   end type
 
-  ! ####################
-  ! # GLOBAL VARIABLES #
-  ! ####################
-
 
   contains
 
@@ -52,16 +57,19 @@ module GlobalUtils
     character(len=*), intent(in) :: requestedState
     type(ParticleType), intent(inout) :: particle
     type(FieldType), intent(inout) :: fields
-    type(runData), intent(in) :: run_data
+    type(runData), intent(inout) :: run_data
 
     select case (to_upper(requestedState))
       case ("NULL")
+        run_data%problem = "Null"
         call NullInitial(particle, fields, run_data)
       
       case ("SINGLE")
+        run_data%problem = "Single"
         call SingleInitial(particle, fields, run_data)
 
       case ("DOUBLE")
+        run_data%problem = "Double"
         call DoubleInitial(particle, fields, run_data)
       
       case default
