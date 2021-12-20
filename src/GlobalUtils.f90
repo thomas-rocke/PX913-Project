@@ -11,12 +11,20 @@ module GlobalUtils
   private
   public RunData, ParticleType, FieldType, SelectConditions
 
+  ! ####################
+  ! # GLOBAL VARIABLES #
+  ! ####################
+
+  real(kind=REAL64), parameter :: DEFAULT_DT = 0.01
+  integer, parameter :: DEFAULT_NUM_TIMESTEPS = 1000
+
   ! ################
   ! # CUSTOM TYPES #
   ! ################
 
   type :: RunData
-    integer :: nx, ny, numTimesteps
+    integer :: nx, ny, numTimesteps = DEFAULT_NUM_TIMESTEPS
+    real(kind=REAL64) :: dt = DEFAULT_DT
   end type
 
   type :: ParticleType
@@ -35,10 +43,6 @@ module GlobalUtils
     contains
     procedure :: E => Get_E_At_Pos
   end type
-
-  ! ####################
-  ! # GLOBAL VARIABLES #
-  ! ####################
 
 
   contains
