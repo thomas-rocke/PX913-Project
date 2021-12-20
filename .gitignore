@@ -12,3 +12,5 @@
 .vscode
 *.exe
 build_scripts/gmon.out
+build_scripts/MemTest.txt
+build_scripts/profile.txt

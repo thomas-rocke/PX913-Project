@@ -11,7 +11,7 @@ ny=100
 
 #### COMPILE #### 
 
-success = 0
+success=0
 
 echo "Compiling Code"
 # File dependancy chain
@@ -27,9 +27,10 @@ fflags=`nf-config --fflags`
 flibs=`nf-config --flibs`
 
 #Compile Line
-$fc -g -std=f2008 $fflags $myprogramfiles $flibs -o $outfile -fopenmp && success = 1
+$fc -g -std=f2008 $fflags $myprogramfiles $flibs -o $outfile -fopenmp && success=1
 
-if [$success -eq 1] then
+if [ $success -eq 1 ]
+then
     #### EXECUTE COMPILED CODE ####
     echo "Executing compiled code"
     # Uses Command Line Args defined above
