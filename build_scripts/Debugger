@@ -33,7 +33,7 @@ then
     #### EXECUTE COMPILED CODE ####
     echo "Executing compiled code"
     # Uses Command Line Args defined above
-    gdb ./$outfile nx=$nx ny=$ny problem=$problem
+    gdb --args ./$outfile nx=$nx ny=$ny problem=$problem
 else
     echo "Compiling step failed. Aborting"
 fi

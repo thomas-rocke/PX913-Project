@@ -1,7 +1,7 @@
 ! NetCDF writer class for writing Electric Field and Particle Path properties
 
 module PIFWriter
-  !use NetCDF
+  use NetCDF
   use ISO_FORTRAN_ENV
   use GlobalUtils
   implicit none
@@ -9,7 +9,8 @@ module PIFWriter
 
   type :: FileData
     integer :: file_id, x_axis_id, y_axis_id, time_axis_id, &
-          rho_id, phi_id, ex_id, ey_id, pos_id, vel_id, acc_id, xy_axis_id
+          rho_id, phi_id, ex_id, ey_id, pos_id, vel_id, acc_id, xy_axis_id &
+          x_dim_vals_id, t_dim_vals_id, t_dim_vals_id
   end type
 
   ! ####################
@@ -27,7 +28,8 @@ module PIFWriter
           DX_NAME = "dx", DY_NAME = "dy", TSTEP_NAME = "timesteps", DT_NAME = "dt"
   
   ! Axes
-  character(len=*), parameter :: XAXIS_NAME = "x_axis", YAXIS_NAME = "y_axis", TAXIS_NAME = "time", XY_AXIS_NAME = "xy_axis"
+  character(len=*), parameter :: XAXIS_NAME = "x_axis", YAXIS_NAME = "y_axis", TAXIS_NAME = "time", XY_AXIS_NAME = "xy_axis", &
+              XDAT_NAME = "x_axis_data", YDAT_NAME = "y_axis_data", TDAT_NAME = "t_axis_data", XYDAT_NAME = "xy_axis_data"
   ! Fields
   character(len=*), parameter :: RHO_NAME = "ChargeDensity", PHI_NAME = "ElectricPotential", &
           EX_NAME = "E_x", EY_NAME = "E_y"
@@ -113,7 +115,7 @@ module PIFWriter
     END IF
 
     ! time_axis
-    ierr = nf90_def_dim(id, TAXIS_NAME, Run_Data%numTimesteps + 1, File_Data%time_axis_id)
+    ierr = nf90_def_dim(id, TAXIS_NAME, Run_Data%numTimesteps + 2, File_Data%time_axis_id)
     IF (ierr /= nf90_noerr) THEN
         PRINT*, TRIM(nf90_strerror(ierr))
         RETURN
@@ -129,7 +131,7 @@ module PIFWriter
     ! FIELDS MATRICES
     
     ! rho
-    ierr = nf90_def_var(id, RHO_NAME, NF90_REAL64, (/ File_Data%x_axis_id, &
+    ierr = nf90_def_var(id, RHO_NAME, NF90_DOUBLE, (/ File_Data%x_axis_id, &
                         File_Data%y_axis_id /), File_Data%rho_id)
     IF (ierr /= nf90_noerr) THEN
         PRINT*, TRIM(nf90_strerror(ierr))
@@ -137,7 +139,7 @@ module PIFWriter
     END IF
 
     ! phi
-    ierr = nf90_def_var(id, PHI_NAME, NF90_REAL64, (/ File_Data%x_axis_id, &
+    ierr = nf90_def_var(id, PHI_NAME, NF90_DOUBLE, (/ File_Data%x_axis_id, &
                         File_Data%y_axis_id /), File_Data%phi_id)
     IF (ierr /= nf90_noerr) THEN
         PRINT*, TRIM(nf90_strerror(ierr))
@@ -145,7 +147,7 @@ module PIFWriter
     END IF
 
     ! Ex
-    ierr = nf90_def_var(id, EX_NAME, NF90_REAL64, (/ File_Data%x_axis_id, &
+    ierr = nf90_def_var(id, EX_NAME, NF90_DOUBLE, (/ File_Data%x_axis_id, &
                         File_Data%y_axis_id /), File_Data%ex_id)
     IF (ierr /= nf90_noerr) THEN
         PRINT*, TRIM(nf90_strerror(ierr))
@@ -153,7 +155,7 @@ module PIFWriter
     END IF
 
     ! Ey
-    ierr = nf90_def_var(id, EY_NAME, NF90_REAL64, (/ File_Data%x_axis_id, &
+    ierr = nf90_def_var(id, EY_NAME, NF90_DOUBLE, (/ File_Data%x_axis_id, &
                         File_Data%y_axis_id /), File_Data%ey_id)
     IF (ierr /= nf90_noerr) THEN
         PRINT*, TRIM(nf90_strerror(ierr))
@@ -162,7 +164,7 @@ module PIFWriter
 
     ! PARTICLE ARRAYS
     ! Pos
-    ierr = nf90_def_var(id, POS_NAME, NF90_REAL64, (/ File_Data%time_axis_id, &
+    ierr = nf90_def_var(id, POS_NAME, NF90_DOUBLE, (/ File_Data%time_axis_id, &
                         File_Data%xy_axis_id /), File_Data%pos_id)
     IF (ierr /= nf90_noerr) THEN
         PRINT*, TRIM(nf90_strerror(ierr))
@@ -170,7 +172,7 @@ module PIFWriter
     END IF
 
     ! Vel
-    ierr = nf90_def_var(id, VEL_NAME, NF90_REAL64, (/ File_Data%time_axis_id, &
+    ierr = nf90_def_var(id, VEL_NAME, NF90_DOUBLE, (/ File_Data%time_axis_id, &
                         File_Data%xy_axis_id /), File_Data%vel_id)
     IF (ierr /= nf90_noerr) THEN
         PRINT*, TRIM(nf90_strerror(ierr))
@@ -178,7 +180,7 @@ module PIFWriter
     END IF
 
     ! Acc
-    ierr = nf90_def_var(id, ACC_NAME, NF90_REAL64, (/ File_Data%time_axis_id, &
+    ierr = nf90_def_var(id, ACC_NAME, NF90_DOUBLE, (/ File_Data%time_axis_id, &
                         File_Data%xy_axis_id /), File_Data%acc_id)
     IF (ierr /= nf90_noerr) THEN
         PRINT*, TRIM(nf90_strerror(ierr))

@@ -13,6 +13,7 @@ program main
   type(RunData) :: Run_Data
   type(FieldType) :: Fields
   type(ParticleType) :: particle
+  type(FileData) :: File_Data
 
   character(len=10) :: sysType
   logical :: nxPresent, nyPresent, typePresent
@@ -40,7 +41,11 @@ program main
   call SelectConditions(sysType, particle, Fields, Run_Data)
   call Get_Field(Fields)
 
-  call OpenFile(Run_Data, id)
+  call OpenFile(Run_Data, File_Data)
+  call MakeMetaData(File_Data, Run_Data, Fields, Particle)
+  !call WriteFields(File_Data, Fields)
+  !call WriteParticle(File_Data, Particle)
+  call CloseFile(File_data)
 
   Print *, Fields%E((/0.0_REAL64, 3.0_REAL64/))
 
