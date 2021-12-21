@@ -2,13 +2,15 @@
 
 module PIFWriter
   use NetCDF
+  use ISO_FORTRAN_ENV
   use GlobalUtils
   implicit none
 
 
   type :: FileData
-    integer :: file_id, x_axis_id, y_axis_id, time_axis_id, %
-          rho_id, phi_id, pos_id, vel_id, acc_id
+    integer :: file_id, x_dim_id, y_dim_id, time_dim_id, &
+          rho_id, phi_id, ex_id, ey_id, pos_id, vel_id, acc_id, xy_dim_id, &
+          x_axis_id, y_axis_id, t_axis_id, xy_axis_id
   end type
 
   ! ####################
@@ -26,7 +28,8 @@ module PIFWriter
           DX_NAME = "dx", DY_NAME = "dy", TSTEP_NAME = "timesteps", DT_NAME = "dt"
   
   ! Axes
-  character(len=*), parameter :: XAXIS_NAME = "x_axis", YAXIS_NAME = "y_axis", TAXIS_NAME = "time"
+  character(len=*), parameter :: XDIM_NAME = "x_dim", YDIM_NAME = "y_dim", TDIM_NAME = "time", XY_DIM_NAME = "xy_dim", &
+              XAXIS_NAME = "x_axis", YAXIS_NAME = "y_axis", TAXIS_NAME = "t_axis", XYAXIS_NAME = "xy_axis_data"
   ! Fields
   character(len=*), parameter :: RHO_NAME = "ChargeDensity", PHI_NAME = "ElectricPotential", &
           EX_NAME = "E_x", EY_NAME = "E_y"
@@ -55,12 +58,6 @@ module PIFWriter
     fname = PATH // FILE_START // trim(Run_Data%problem) // ", nx=" // trim(str(Run_Data%nx)) // &
                   ", ny=" // trim(str(Run_Data%ny)) // FILE_EXTENSION
 
-    !
-    ! OPEN FILE
-    !
-
-    Print *, "Creating file ", fname
-
     ierr = nf90_create(trim(fname), NF90_CLOBBER, File_Data%file_id)
     IF (ierr /= nf90_noerr) THEN
         PRINT*, TRIM(nf90_strerror(ierr))
@@ -74,7 +71,8 @@ module PIFWriter
     type(RunData), intent(in) :: Run_Data
     type(FieldType), intent(in) :: Fields
     type(ParticleType), intent(in) :: Particle
-    integer :: ierr, x_axis_id, y_axis_id, id
+    integer :: ierr, x_dim_id, y_dim_id, id, i
+    real(kind=REAL64), dimension(0:Run_Data%numTimesteps) :: t_axis
 
     id = File_Data%file_id
 
@@ -90,47 +88,250 @@ module PIFWriter
     call make_global(NY_NAME, Run_Data%ny, id)
 
     ! dx
-    call make_global(DX_NAME, Run_Data%dx, id)
+    call make_global(DX_NAME, Fields%dx, id)
 
     ! dy
-    call make_global(DY_NAME, Run_Data%dy, id)
+    call make_global(DY_NAME, Fields%dy, id)
 
     ! timesteps
-    call make_global(TSTEP_NAME, Run_Data%timesteps, id)
+    call make_global(TSTEP_NAME, Run_Data%numTimesteps, id)
 
     ! dt
     call make_global(DT_NAME, Run_Data%dt, id)
 
     ! AXES
     ! x_axis
-    ierr = nf90_def_dim(id, XAXIS_NAME, nx, x_axis_id)
+    ierr = nf90_def_dim(id, XDIM_NAME, Run_Data%nx, File_Data%x_dim_id)
     IF (ierr /= nf90_noerr) THEN
         PRINT*, TRIM(nf90_strerror(ierr))
         RETURN
     END IF
 
+    ierr = nf90_def_var(id, XAXIS_NAME, NF90_DOUBLE, &
+                    File_Data%x_dim_id, File_Data%x_axis_id)
+    IF (ierr /= nf90_noerr) THEN
+        PRINT*, TRIM(nf90_strerror(ierr))
+        RETURN
+    END IF
 
+    ! y_axis
+    ierr = nf90_def_dim(id, YDIM_NAME, Run_Data%ny, File_Data%y_dim_id)
+    IF (ierr /= nf90_noerr) THEN
+        PRINT*, TRIM(nf90_strerror(ierr))
+        RETURN
+    END IF
 
+    ierr = nf90_def_var(id, YAXIS_NAME, NF90_DOUBLE, &
+                    File_Data%y_dim_id, File_Data%y_axis_id)
+    IF (ierr /= nf90_noerr) THEN
+        PRINT*, TRIM(nf90_strerror(ierr))
+        RETURN
+    END IF
+
+    ! time_axis
+    ierr = nf90_def_dim(id, TDIM_NAME, Run_Data%numTimesteps + 2, File_Data%time_dim_id)
+    IF (ierr /= nf90_noerr) THEN
+        PRINT*, TRIM(nf90_strerror(ierr))
+        RETURN
+    END IF
+
+    ierr = nf90_def_var(id, TAXIS_NAME, NF90_DOUBLE, &
+                    File_Data%time_dim_id, File_Data%t_axis_id)
+    IF (ierr /= nf90_noerr) THEN
+        PRINT*, TRIM(nf90_strerror(ierr))
+        RETURN
+    END IF
+
+    ! xy_axis
+    ierr = nf90_def_dim(id, XY_DIM_NAME, 2, File_Data%xy_dim_id)
+    IF (ierr /= nf90_noerr) THEN
+        PRINT*, TRIM(nf90_strerror(ierr))
+        RETURN
+    END IF
+
+    ierr = nf90_def_var(id, XYAXIS_NAME, NF90_CHAR, &
+                    File_Data%xy_dim_id, File_Data%xy_axis_id)
+    IF (ierr /= nf90_noerr) THEN
+        PRINT*, TRIM(nf90_strerror(ierr))
+        RETURN
+    END IF
+
+    ! FIELDS MATRICES
+    
+    ! rho
+    ierr = nf90_def_var(id, RHO_NAME, NF90_DOUBLE, (/ File_Data%x_dim_id, &
+                        File_Data%y_dim_id /), File_Data%rho_id)
+    IF (ierr /= nf90_noerr) THEN
+        PRINT*, TRIM(nf90_strerror(ierr))
+        RETURN
+    END IF
+
+    ! phi
+    ierr = nf90_def_var(id, PHI_NAME, NF90_DOUBLE, (/ File_Data%x_dim_id, &
+                        File_Data%y_dim_id /), File_Data%phi_id)
+    IF (ierr /= nf90_noerr) THEN
+        PRINT*, TRIM(nf90_strerror(ierr))
+        RETURN
+    END IF
+
+    ! Ex
+    ierr = nf90_def_var(id, EX_NAME, NF90_DOUBLE, (/ File_Data%x_dim_id, &
+                        File_Data%y_dim_id /), File_Data%ex_id)
+    IF (ierr /= nf90_noerr) THEN
+        PRINT*, TRIM(nf90_strerror(ierr))
+        RETURN
+    END IF
+
+    ! Ey
+    ierr = nf90_def_var(id, EY_NAME, NF90_DOUBLE, (/ File_Data%x_dim_id, &
+                        File_Data%y_dim_id /), File_Data%ey_id)
+    IF (ierr /= nf90_noerr) THEN
+        PRINT*, TRIM(nf90_strerror(ierr))
+        RETURN
+    END IF
+
+    ! PARTICLE ARRAYS
+    ! Pos
+    ierr = nf90_def_var(id, POS_NAME, NF90_DOUBLE, (/ File_Data%time_dim_id, &
+                        File_Data%xy_dim_id /), File_Data%pos_id)
+    IF (ierr /= nf90_noerr) THEN
+        PRINT*, TRIM(nf90_strerror(ierr))
+        RETURN
+    END IF
+
+    ! Vel
+    ierr = nf90_def_var(id, VEL_NAME, NF90_DOUBLE, (/ File_Data%time_dim_id, &
+                        File_Data%xy_dim_id /), File_Data%vel_id)
+    IF (ierr /= nf90_noerr) THEN
+        PRINT*, TRIM(nf90_strerror(ierr))
+        RETURN
+    END IF
+
+    ! Acc
+    ierr = nf90_def_var(id, ACC_NAME, NF90_DOUBLE, (/ File_Data%time_dim_id, &
+                        File_Data%xy_dim_id /), File_Data%acc_id)
+    IF (ierr /= nf90_noerr) THEN
+        PRINT*, TRIM(nf90_strerror(ierr))
+        RETURN
+    END IF
+
+    ! End NetCDF variable definitions
+    ierr = nf90_enddef(id)
+    IF (ierr /= nf90_noerr) THEN
+        PRINT*, TRIM(nf90_strerror(ierr))
+        RETURN
+    END IF
+
+    ! Populate Time axis
+    t_axis = 0.0_REAL64
+
+    do i=1, Run_Data%numTimesteps
+      t_axis(i) = i * Run_Data%dt
+    end do
+
+    ierr = nf90_put_var(id, File_Data%t_axis_id, t_axis)
+    IF (ierr /= nf90_noerr) THEN
+        PRINT*, TRIM(nf90_strerror(ierr))
+        RETURN
+    END IF
+
+    ! Populate xy axis
+    ierr = nf90_put_var(id, File_Data%xy_axis_id, (/"x", "y"/))
+    IF (ierr /= nf90_noerr) THEN
+        PRINT*, TRIM(nf90_strerror(ierr))
+        RETURN
+    END IF
   end subroutine
 
-  subroutine WriteFields(id, Fields)
+  subroutine WriteFields(File_Data, Fields)
     ! Writes all Fields data to the file
-    integer, intent(in) :: id
+    type(FileData), intent(in) :: File_Data
     type(FieldType), intent(in) :: Fields
-    integer :: ierr
+    integer :: ierr, id
+    id = File_Data%file_id
+
+    ! FILL IN AXES
+
+    ! x_axis
+    ierr = nf90_put_var(id, File_Data%x_axis_id, Fields%x_axis)
+    IF (ierr /= nf90_noerr) THEN
+        PRINT*, TRIM(nf90_strerror(ierr))
+        RETURN
+    END IF
+
+    ! y_axis
+    ierr = nf90_put_var(id, File_Data%y_axis_id, Fields%y_axis)
+    IF (ierr /= nf90_noerr) THEN
+        PRINT*, TRIM(nf90_strerror(ierr))
+        RETURN
+    END IF
+     
+    ! FILL IN MATRICES
+
+    ! rho
+    ierr = nf90_put_var(id, File_Data%rho_id, Fields%rho)
+    IF (ierr /= nf90_noerr) THEN
+        PRINT*, TRIM(nf90_strerror(ierr))
+        RETURN
+    END IF
+
+    ! phi
+    ierr = nf90_put_var(id, File_Data%phi_id, Fields%phi)
+    IF (ierr /= nf90_noerr) THEN
+        PRINT*, TRIM(nf90_strerror(ierr))
+        RETURN
+    END IF
+
+    ! E_x
+    ierr = nf90_put_var(id, File_Data%Ex_id, Fields%Ex)
+    IF (ierr /= nf90_noerr) THEN
+        PRINT*, TRIM(nf90_strerror(ierr))
+        RETURN
+    END IF
+
+    ! E_y
+    ierr = nf90_put_var(id, File_Data%Ey_id, Fields%Ey)
+    IF (ierr /= nf90_noerr) THEN
+        PRINT*, TRIM(nf90_strerror(ierr))
+        RETURN
+    END IF
+
   end subroutine
 
-  subroutine WriteParticle(id, Particle)
+  subroutine WriteParticle(File_Data, Particle)
     ! Writes all particle data to the file
-    integer, intent(in) :: id
+    type(FileData), intent(in) :: File_Data
     type(ParticleType), intent(in) :: Particle
-    integer :: ierr
+    integer :: ierr, id
+    id = File_Data%file_id
+
+    ! Pos
+    ierr = nf90_put_var(id, File_Data%Pos_id, Particle%pos)
+    IF (ierr /= nf90_noerr) THEN
+        PRINT*, TRIM(nf90_strerror(ierr))
+        RETURN
+    END IF
+
+    ! Vel
+    ierr = nf90_put_var(id, File_Data%Vel_id, Particle%vel)
+    IF (ierr /= nf90_noerr) THEN
+        PRINT*, TRIM(nf90_strerror(ierr))
+        RETURN
+    END IF
+
+    ! Acc
+    ierr = nf90_put_var(id, File_Data%Acc_id, Particle%acc)
+    IF (ierr /= nf90_noerr) THEN
+        PRINT*, TRIM(nf90_strerror(ierr))
+        RETURN
+    END IF
   end subroutine
 
-  subroutine CloseFile(id)
+  subroutine CloseFile(File_Data)
     ! Closes file given by id
-    integer, intent(in) :: id
-    integer :: ierr
+    type(FileData), intent(in) :: File_Data
+    integer :: ierr, id
+    id = File_Data%file_id
     ierr = nf90_close(id)
     IF (ierr /= nf90_noerr) THEN
         PRINT*, TRIM(nf90_strerror(ierr))
@@ -150,6 +351,7 @@ module PIFWriter
     ! Makes global attribute with name key
     character(len=*), intent(in) :: key
     integer, intent(in) :: val, file_id
+    integer :: ierr
 
     ierr = nf90_put_att(file_id, NF90_GLOBAL, key, val)
     IF (ierr /= nf90_noerr) THEN
@@ -163,6 +365,7 @@ module PIFWriter
     character(len=*), intent(in) :: key
     integer, intent(in) :: file_id
     real(kind=REAL64), intent(in) :: val
+    integer :: ierr
 
     ierr = nf90_put_att(file_id, NF90_GLOBAL, key, val)
     IF (ierr /= nf90_noerr) THEN
@@ -176,6 +379,7 @@ module PIFWriter
     character(len=*), intent(in) :: key
     integer, intent(in) :: file_id
     character(len=*), intent(in) :: val
+    integer :: ierr
 
     ierr = nf90_put_att(file_id, NF90_GLOBAL, key, val)
     IF (ierr /= nf90_noerr) THEN

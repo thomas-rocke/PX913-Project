@@ -22,6 +22,7 @@ Defined variables are as follows:
 "x_axis" : REAL64 array, len=nx; x positions of all grid points
 "y_axis" : REAL64 array, len=ny; y positions of all grid points
 "time" : REAL64 array, len=Timesteps; Total elapsed time at each timestep
+"xy_axis" : character array, len=2; Equal to (/"x", "y"/), used to define the particle arrays
 
 ### Field Data
 "ChargeDensity" : (1:nx, 1:ny) matrix of REAL64s; Charge density at all grid points
@@ -34,6 +35,6 @@ Each of the Particle Data matrices encode data for each timestep, so Prop(i, :) 
 Timestep 0 is the particle initial conditions
 
 "Positions" : (0:timesteps, 1:2) matrix of REAL64s; (x, y) positions at each timestep.
-"Velocities" : (0:timesteps + 1, 1:2) matrix of REAL64s; (v_x, v_y) velocities at each timestep.
+"Velocities" : (0:timesteps, 1:2) matrix of REAL64s; (v_x, v_y) velocities at each timestep.
 "Accelerations" : (0:timesteps, 1:2) matrix of REAL64s; (a_x, a_y) accelerations at each timestep.
 
