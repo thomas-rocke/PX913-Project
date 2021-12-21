@@ -149,7 +149,7 @@ module PIFWriter
         RETURN
     END IF
 
-    ierr = nf90_def_var(id, XYAXIS_NAME, NF90_DOUBLE, &
+    ierr = nf90_def_var(id, XYAXIS_NAME, NF90_CHAR, &
                     File_Data%xy_dim_id, File_Data%xy_axis_id)
     IF (ierr /= nf90_noerr) THEN
         PRINT*, TRIM(nf90_strerror(ierr))
