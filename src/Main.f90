@@ -41,6 +41,10 @@ program main
   call SelectConditions(sysType, particle, Fields, Run_Data)
   call Get_Field(Fields)
 
+  ! Particle Mover
+  !call init_pos_vel(sysType,run_data,particle,fields)
+  call VelocityVerlet(run_data,particle,fields)
+
   call OpenFile(Run_Data, File_Data)
   call MakeMetaData(File_Data, Run_Data, Fields, Particle)
   !call WriteFields(File_Data, Fields)

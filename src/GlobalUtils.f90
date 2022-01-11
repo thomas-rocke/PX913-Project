@@ -16,7 +16,7 @@ module GlobalUtils
   ! ####################
 
   real(kind=REAL64), parameter :: DEFAULT_DT = 0.01
-  integer, parameter :: DEFAULT_NUM_TIMESTEPS = 1000
+  integer, parameter :: DEFAULT_NUM_TIMESTEPS = 10
 
   ! ################
   ! # CUSTOM TYPES #
