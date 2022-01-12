@@ -18,8 +18,6 @@ program main
   character(len=10) :: sysType
   logical :: nxPresent, nyPresent, typePresent
 
-  integer :: id
-
 
   call parse_args() ! Get all command line args
 
@@ -46,7 +44,7 @@ program main
   call VelocityVerlet(run_data,particle,fields)
 
   call OpenFile(Run_Data, File_Data)
-  call MakeMetaData(File_Data, Run_Data, Fields, Particle)
+  call MakeMetaData(File_Data, Run_Data, Fields)
   call WriteFields(File_Data, Fields)
   call WriteParticle(File_Data, Particle)
   call CloseFile(File_data)
