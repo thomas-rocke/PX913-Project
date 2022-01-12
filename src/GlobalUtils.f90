@@ -233,7 +233,7 @@ module GlobalUtils
 
     ! Fields object allocation
     allocate(fields%rho(1:nx, 1:ny))
-    allocate(fields%phi(1:nx, 1:ny))
+    allocate(fields%phi(0:nx + 1, 0:ny + 1))
     allocate(fields%Ex(1:nx, 1:ny))
     allocate(fields%Ey(1:nx, 1:ny))
     call create_axis(fields%x_axis, nx, (/-1.0_REAL64, 1.0_REAL64/), delta=fields%dx)

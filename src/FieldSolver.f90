@@ -103,18 +103,12 @@ module FieldSolver
     ! Solve the x component of the electric field given the potential
     type(FieldType), intent(inout) :: Fields
     real(kind=REAL64), intent(in) :: inv_dx
-    real(kind=REAL64), dimension(0:size(Fields%phi, 1) + 1, &
-                                  0:size(Fields%phi, 2) + 1) :: Guarded_phi
     integer :: i, j
 
-    Guarded_phi = 0.0_REAL64
-
-    Guarded_phi(1:size(Fields%phi, 1), 1:size(Fields%phi, 2)) = Fields%phi
-
-    !$omp parallel do private(i) shared(Fields, Guarded_phi)
-    do j=1, size(Fields%phi, 2)
-      do i=1, size(Fields%phi, 1)
-        Fields%Ex(i, j) = (Guarded_phi(i+1, j) - Guarded_phi(i-1, j)) * 0.5_REAL64 * inv_dx
+    !$omp parallel do private(i) shared(Fields)
+    do j=1, size(Fields%Ex, 2)
+      do i=1, size(Fields%Ex, 1)
+        Fields%Ex(i, j) = (Fields%phi(i+1, j) - Fields%phi(i-1, j)) * 0.5_REAL64 * inv_dx
       end do
     end do
   end subroutine
@@ -123,18 +117,12 @@ module FieldSolver
     ! Solve the y component of the electric field given the potential
     type(FieldType), intent(inout) :: Fields
     real(kind=REAL64), intent(in) :: inv_dy
-    real(kind=REAL64), dimension(0:size(Fields%phi, 1) + 1, &
-                                  0:size(Fields%phi, 2) + 1) :: Guarded_phi
     integer :: i, j
 
-    Guarded_phi = 0.0_REAL64
-
-    Guarded_phi(1:size(Fields%phi, 1), 1:size(Fields%phi, 2)) = Fields%phi
-
-    !$omp parallel do private(i) shared(Fields, Guarded_phi)
-    do j=1, size(Fields%phi, 2)
-      do i=1, size(Fields%phi, 1)
-        Fields%Ey(i, j) = (Guarded_phi(i, j+1) - Guarded_phi(i, j-1)) * 0.5_REAL64 * inv_dy
+    !$omp parallel do private(i) shared(Fields)
+    do j=1, size(Fields%Ey, 2)
+      do i=1, size(Fields%Ey, 1)
+        Fields%Ey(i, j) = (Fields%phi(i, j+1) - Fields%phi(i, j-1)) * 0.5_REAL64 * inv_dy
       end do
     end do
   end subroutine

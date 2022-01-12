@@ -65,13 +65,12 @@ module PIFWriter
     END IF
   end subroutine
 
-  subroutine MakeMetaData(File_Data, Run_Data, Fields, Particle)
+  subroutine MakeMetaData(File_Data, Run_Data, Fields)
     ! Generates the metadata in the file given by id
     type(FileData), intent(inout) :: File_Data
     type(RunData), intent(in) :: Run_Data
     type(FieldType), intent(in) :: Fields
-    type(ParticleType), intent(in) :: Particle
-    integer :: ierr, x_dim_id, y_dim_id, id, i
+    integer :: ierr, id, i
     real(kind=REAL64), dimension(0:Run_Data%numTimesteps) :: t_axis
 
     id = File_Data%file_id
