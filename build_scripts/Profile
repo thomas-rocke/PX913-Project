@@ -27,7 +27,7 @@ fflags=`nf-config --fflags`
 flibs=`nf-config --flibs`
 
 #Compile Line
-$fc -g -std=f2008 $fflags $myprogramfiles $flibs -o $outfile -pg && success=1
+$fc -g -std=f2008 $fflags $myprogramfiles $flibs -o $outfile -pg -O0 && success=1
 
 if [ $success -eq 1 ] 
 then

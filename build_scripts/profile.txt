@@ -3,23 +3,31 @@ Flat profile:
 Each sample counts as 0.01 seconds.
   %   cumulative   self              self     total           
  time   seconds   seconds    calls   s/call   s/call  name    
- 31.05      2.16     2.16 368843108     0.00     0.00  __fieldsolver_MOD_total_deriv_2d
- 25.15      3.91     1.75    18077     0.00     0.00  __fieldsolver_MOD_get_e_tot
- 21.70      5.42     1.51    18077     0.00     0.00  __fieldsolver_MOD_gauss_seidel_iteration
- 20.99      6.88     1.46    18077     0.00     0.00  __fieldsolver_MOD_get_d_rms
-  1.01      6.95     0.07        1     0.07     0.07  __globalutils_MOD_selectconditions
-  0.14      6.96     0.01        1     0.01     6.89  __fieldsolver_MOD_get_field
-  0.00      6.96     0.00        2     0.00     0.00  __command_line_MOD_get_arg_name_int
-  0.00      6.96     0.00        2     0.00     0.00  __domain_tools_MOD_create_axis
-  0.00      6.96     0.00        1     0.00     6.96  MAIN__
-  0.00      6.96     0.00        1     0.00     0.00  __command_line_MOD_get_arg_name_str
-  0.00      6.96     0.00        1     0.00     0.00  __command_line_MOD_parse_args
-  0.00      6.96     0.00        1     0.00     0.00  __fieldsolver_MOD_e_x
-  0.00      6.96     0.00        1     0.00     0.00  __fieldsolver_MOD_e_y
-  0.00      6.96     0.00        1     0.00     0.00  __globalutils_MOD_cleanandallocate
-  0.00      6.96     0.00        1     0.00     0.00  __globalutils_MOD_get_e_at_pos
-  0.00      6.96     0.00        1     0.00     0.00  __globalutils_MOD_singleinitial
-  0.00      6.96     0.00        1     0.00     0.00  __globalutils_MOD_to_upper
+ 33.53      0.60     0.60 116466032     0.00     0.00  __fieldsolver_MOD_total_deriv_2d
+ 22.91      1.01     0.41     5708     0.00     0.00  __fieldsolver_MOD_gauss_seidel_iteration
+ 22.35      1.41     0.40     5708     0.00     0.00  __fieldsolver_MOD_get_e_tot
+ 20.68      1.78     0.37     5708     0.00     0.00  __fieldsolver_MOD_get_d_rms
+  0.56      1.79     0.01        1     0.01     0.01  __globalutils_MOD_selectconditions
+  0.00      1.79     0.00     2001     0.00     0.00  __globalutils_MOD_get_e_at_pos
+  0.00      1.79     0.00        3     0.00     0.00  __pifwriter_MOD_make_global_int
+  0.00      1.79     0.00        3     0.00     0.00  __pifwriter_MOD_make_global_real
+  0.00      1.79     0.00        2     0.00     0.00  __command_line_MOD_get_arg_name_int
+  0.00      1.79     0.00        2     0.00     0.00  __domain_tools_MOD_create_axis
+  0.00      1.79     0.00        2     0.00     0.00  __pifwriter_MOD_str
+  0.00      1.79     0.00        1     0.00     1.79  MAIN__
+  0.00      1.79     0.00        1     0.00     0.00  __command_line_MOD_get_arg_name_str
+  0.00      1.79     0.00        1     0.00     0.00  __command_line_MOD_parse_args
+  0.00      1.79     0.00        1     0.00     0.00  __fieldsolver_MOD_e_x
+  0.00      1.79     0.00        1     0.00     0.00  __fieldsolver_MOD_e_y
+  0.00      1.79     0.00        1     0.00     1.78  __fieldsolver_MOD_get_field
+  0.00      1.79     0.00        1     0.00     0.00  __globalutils_MOD_cleanandallocate
+  0.00      1.79     0.00        1     0.00     0.00  __globalutils_MOD_singleinitial
+  0.00      1.79     0.00        1     0.00     0.00  __globalutils_MOD_to_upper
+  0.00      1.79     0.00        1     0.00     0.00  __particlesolver_MOD_velocityverlet
+  0.00      1.79     0.00        1     0.00     0.00  __pifwriter_MOD_closefile
+  0.00      1.79     0.00        1     0.00     0.00  __pifwriter_MOD_make_global_char
+  0.00      1.79     0.00        1     0.00     0.00  __pifwriter_MOD_makemetadata
+  0.00      1.79     0.00        1     0.00     0.00  __pifwriter_MOD_openfile
 
  %         the percentage of the total running time of the
 time       program used by this function.
@@ -57,81 +65,115 @@ notice and this notice are preserved.
 		     Call graph (explanation follows)
 
 
-granularity: each sample hit covers 2 byte(s) for 0.14% of 6.96 seconds
+granularity: each sample hit covers 2 byte(s) for 0.56% of 1.79 seconds
 
 index % time    self  children    called     name
-                0.00    6.96       1/1           main [2]
-[1]    100.0    0.00    6.96       1         MAIN__ [1]
-                0.01    6.88       1/1           __fieldsolver_MOD_get_field [3]
-                0.07    0.00       1/1           __globalutils_MOD_selectconditions [8]
-                0.00    0.00       2/2           __command_line_MOD_get_arg_name_int [15]
-                0.00    0.00       1/1           __command_line_MOD_parse_args [18]
-                0.00    0.00       1/1           __command_line_MOD_get_arg_name_str [17]
-                0.00    0.00       1/1           __globalutils_MOD_get_e_at_pos [22]
+                0.00    1.79       1/1           main [2]
+[1]    100.0    0.00    1.79       1         MAIN__ [1]
+                0.00    1.78       1/1           __fieldsolver_MOD_get_field [3]
+                0.01    0.00       1/1           __globalutils_MOD_selectconditions [8]
+                0.00    0.00       2/2           __command_line_MOD_get_arg_name_int [18]
+                0.00    0.00       1/1           __command_line_MOD_parse_args [22]
+                0.00    0.00       1/1           __command_line_MOD_get_arg_name_str [21]
+                0.00    0.00       1/1           __particlesolver_MOD_velocityverlet [28]
+                0.00    0.00       1/1           __pifwriter_MOD_openfile [32]
+                0.00    0.00       1/1           __pifwriter_MOD_closefile [29]
+                0.00    0.00       1/1           __pifwriter_MOD_makemetadata [31]
+                0.00    0.00       1/2001        __globalutils_MOD_get_e_at_pos [15]
 -----------------------------------------------
                                                  <spontaneous>
-[2]    100.0    0.00    6.96                 main [2]
-                0.00    6.96       1/1           MAIN__ [1]
+[2]    100.0    0.00    1.79                 main [2]
+                0.00    1.79       1/1           MAIN__ [1]
 -----------------------------------------------
-                0.01    6.88       1/1           MAIN__ [1]
-[3]     99.0    0.01    6.88       1         __fieldsolver_MOD_get_field [3]
-                1.75    1.10   18077/18077       __fieldsolver_MOD_get_e_tot [4]
-                1.46    1.06   18077/18077       __fieldsolver_MOD_get_d_rms [5]
-                1.51    0.00   18077/18077       __fieldsolver_MOD_gauss_seidel_iteration [7]
-                0.00    0.00       1/1           __fieldsolver_MOD_e_x [19]
-                0.00    0.00       1/1           __fieldsolver_MOD_e_y [20]
+                0.00    1.78       1/1           MAIN__ [1]
+[3]     99.4    0.00    1.78       1         __fieldsolver_MOD_get_field [3]
+                0.40    0.31    5708/5708        __fieldsolver_MOD_get_e_tot [4]
+                0.37    0.29    5708/5708        __fieldsolver_MOD_get_d_rms [5]
+                0.41    0.00    5708/5708        __fieldsolver_MOD_gauss_seidel_iteration [7]
+                0.00    0.00       1/1           __fieldsolver_MOD_e_x [23]
+                0.00    0.00       1/1           __fieldsolver_MOD_e_y [24]
 -----------------------------------------------
-                1.75    1.10   18077/18077       __fieldsolver_MOD_get_field [3]
-[4]     41.0    1.75    1.10   18077         __fieldsolver_MOD_get_e_tot [4]
-                1.10    0.00 188073108/368843108     __fieldsolver_MOD_total_deriv_2d [6]
+                0.40    0.31    5708/5708        __fieldsolver_MOD_get_field [3]
+[4]     39.4    0.40    0.31    5708         __fieldsolver_MOD_get_e_tot [4]
+                0.31    0.00 59386032/116466032     __fieldsolver_MOD_total_deriv_2d [6]
 -----------------------------------------------
-                1.46    1.06   18077/18077       __fieldsolver_MOD_get_field [3]
-[5]     36.2    1.46    1.06   18077         __fieldsolver_MOD_get_d_rms [5]
-                1.06    0.00 180770000/368843108     __fieldsolver_MOD_total_deriv_2d [6]
+                0.37    0.29    5708/5708        __fieldsolver_MOD_get_field [3]
+[5]     37.1    0.37    0.29    5708         __fieldsolver_MOD_get_d_rms [5]
+                0.29    0.00 57080000/116466032     __fieldsolver_MOD_total_deriv_2d [6]
 -----------------------------------------------
-                1.06    0.00 180770000/368843108     __fieldsolver_MOD_get_d_rms [5]
-                1.10    0.00 188073108/368843108     __fieldsolver_MOD_get_e_tot [4]
-[6]     31.0    2.16    0.00 368843108         __fieldsolver_MOD_total_deriv_2d [6]
+                0.29    0.00 57080000/116466032     __fieldsolver_MOD_get_d_rms [5]
+                0.31    0.00 59386032/116466032     __fieldsolver_MOD_get_e_tot [4]
+[6]     33.5    0.60    0.00 116466032         __fieldsolver_MOD_total_deriv_2d [6]
 -----------------------------------------------
-                1.51    0.00   18077/18077       __fieldsolver_MOD_get_field [3]
-[7]     21.7    1.51    0.00   18077         __fieldsolver_MOD_gauss_seidel_iteration [7]
+                0.41    0.00    5708/5708        __fieldsolver_MOD_get_field [3]
+[7]     22.9    0.41    0.00    5708         __fieldsolver_MOD_gauss_seidel_iteration [7]
 -----------------------------------------------
-                0.07    0.00       1/1           MAIN__ [1]
-[8]      1.0    0.07    0.00       1         __globalutils_MOD_selectconditions [8]
-                0.00    0.00       1/1           __globalutils_MOD_to_upper [24]
-                0.00    0.00       1/1           __globalutils_MOD_singleinitial [23]
+                0.01    0.00       1/1           MAIN__ [1]
+[8]      0.6    0.01    0.00       1         __globalutils_MOD_selectconditions [8]
+                0.00    0.00       1/1           __globalutils_MOD_to_upper [27]
+                0.00    0.00       1/1           __globalutils_MOD_singleinitial [26]
+-----------------------------------------------
+                0.00    0.00       1/2001        MAIN__ [1]
+                0.00    0.00    2000/2001        __particlesolver_MOD_velocityverlet [28]
+[15]     0.0    0.00    0.00    2001         __globalutils_MOD_get_e_at_pos [15]
+-----------------------------------------------
+                0.00    0.00       3/3           __pifwriter_MOD_makemetadata [31]
+[16]     0.0    0.00    0.00       3         __pifwriter_MOD_make_global_int [16]
+-----------------------------------------------
+                0.00    0.00       3/3           __pifwriter_MOD_makemetadata [31]
+[17]     0.0    0.00    0.00       3         __pifwriter_MOD_make_global_real [17]
 -----------------------------------------------
                 0.00    0.00       2/2           MAIN__ [1]
-[15]     0.0    0.00    0.00       2         __command_line_MOD_get_arg_name_int [15]
+[18]     0.0    0.00    0.00       2         __command_line_MOD_get_arg_name_int [18]
 -----------------------------------------------
-                0.00    0.00       2/2           __globalutils_MOD_cleanandallocate [21]
-[16]     0.0    0.00    0.00       2         __domain_tools_MOD_create_axis [16]
+                0.00    0.00       2/2           __globalutils_MOD_cleanandallocate [25]
+[19]     0.0    0.00    0.00       2         __domain_tools_MOD_create_axis [19]
+-----------------------------------------------
+                0.00    0.00       2/2           __pifwriter_MOD_openfile [32]
+[20]     0.0    0.00    0.00       2         __pifwriter_MOD_str [20]
 -----------------------------------------------
                 0.00    0.00       1/1           MAIN__ [1]
-[17]     0.0    0.00    0.00       1         __command_line_MOD_get_arg_name_str [17]
+[21]     0.0    0.00    0.00       1         __command_line_MOD_get_arg_name_str [21]
 -----------------------------------------------
                 0.00    0.00       1/1           MAIN__ [1]
-[18]     0.0    0.00    0.00       1         __command_line_MOD_parse_args [18]
+[22]     0.0    0.00    0.00       1         __command_line_MOD_parse_args [22]
 -----------------------------------------------
                 0.00    0.00       1/1           __fieldsolver_MOD_get_field [3]
-[19]     0.0    0.00    0.00       1         __fieldsolver_MOD_e_x [19]
+[23]     0.0    0.00    0.00       1         __fieldsolver_MOD_e_x [23]
 -----------------------------------------------
                 0.00    0.00       1/1           __fieldsolver_MOD_get_field [3]
-[20]     0.0    0.00    0.00       1         __fieldsolver_MOD_e_y [20]
+[24]     0.0    0.00    0.00       1         __fieldsolver_MOD_e_y [24]
 -----------------------------------------------
-                0.00    0.00       1/1           __globalutils_MOD_singleinitial [23]
-[21]     0.0    0.00    0.00       1         __globalutils_MOD_cleanandallocate [21]
-                0.00    0.00       2/2           __domain_tools_MOD_create_axis [16]
+                0.00    0.00       1/1           __globalutils_MOD_singleinitial [26]
+[25]     0.0    0.00    0.00       1         __globalutils_MOD_cleanandallocate [25]
+                0.00    0.00       2/2           __domain_tools_MOD_create_axis [19]
+-----------------------------------------------
+                0.00    0.00       1/1           __globalutils_MOD_selectconditions [8]
+[26]     0.0    0.00    0.00       1         __globalutils_MOD_singleinitial [26]
+                0.00    0.00       1/1           __globalutils_MOD_cleanandallocate [25]
+-----------------------------------------------
+                0.00    0.00       1/1           __globalutils_MOD_selectconditions [8]
+[27]     0.0    0.00    0.00       1         __globalutils_MOD_to_upper [27]
 -----------------------------------------------
                 0.00    0.00       1/1           MAIN__ [1]
-[22]     0.0    0.00    0.00       1         __globalutils_MOD_get_e_at_pos [22]
+[28]     0.0    0.00    0.00       1         __particlesolver_MOD_velocityverlet [28]
+                0.00    0.00    2000/2001        __globalutils_MOD_get_e_at_pos [15]
 -----------------------------------------------
-                0.00    0.00       1/1           __globalutils_MOD_selectconditions [8]
-[23]     0.0    0.00    0.00       1         __globalutils_MOD_singleinitial [23]
-                0.00    0.00       1/1           __globalutils_MOD_cleanandallocate [21]
+                0.00    0.00       1/1           MAIN__ [1]
+[29]     0.0    0.00    0.00       1         __pifwriter_MOD_closefile [29]
 -----------------------------------------------
-                0.00    0.00       1/1           __globalutils_MOD_selectconditions [8]
-[24]     0.0    0.00    0.00       1         __globalutils_MOD_to_upper [24]
+                0.00    0.00       1/1           __pifwriter_MOD_makemetadata [31]
+[30]     0.0    0.00    0.00       1         __pifwriter_MOD_make_global_char [30]
+-----------------------------------------------
+                0.00    0.00       1/1           MAIN__ [1]
+[31]     0.0    0.00    0.00       1         __pifwriter_MOD_makemetadata [31]
+                0.00    0.00       3/3           __pifwriter_MOD_make_global_int [16]
+                0.00    0.00       3/3           __pifwriter_MOD_make_global_real [17]
+                0.00    0.00       1/1           __pifwriter_MOD_make_global_char [30]
+-----------------------------------------------
+                0.00    0.00       1/1           MAIN__ [1]
+[32]     0.0    0.00    0.00       1         __pifwriter_MOD_openfile [32]
+                0.00    0.00       2/2           __pifwriter_MOD_str [20]
 -----------------------------------------------
 
  This table describes the call tree of the program, and was sorted by
@@ -224,9 +266,12 @@ notice and this notice are preserved.
 
 Index by function name
 
-   [1] MAIN__ (Main.f90)      [20] __fieldsolver_MOD_e_y (FieldSolver.f90) [21] __globalutils_MOD_cleanandallocate (GlobalUtils.f90)
-  [15] __command_line_MOD_get_arg_name_int [7] __fieldsolver_MOD_gauss_seidel_iteration (FieldSolver.f90) [22] __globalutils_MOD_get_e_at_pos
-  [17] __command_line_MOD_get_arg_name_str [5] __fieldsolver_MOD_get_d_rms (FieldSolver.f90) [8] __globalutils_MOD_selectconditions
-  [18] __command_line_MOD_parse_args [4] __fieldsolver_MOD_get_e_tot (FieldSolver.f90) [23] __globalutils_MOD_singleinitial (GlobalUtils.f90)
-  [16] __domain_tools_MOD_create_axis [3] __fieldsolver_MOD_get_field [24] __globalutils_MOD_to_upper (GlobalUtils.f90)
-  [19] __fieldsolver_MOD_e_x (FieldSolver.f90) [6] __fieldsolver_MOD_total_deriv_2d (FieldSolver.f90)
+   [1] MAIN__ (Main.f90)       [4] __fieldsolver_MOD_get_e_tot (FieldSolver.f90) [29] __pifwriter_MOD_closefile
+  [18] __command_line_MOD_get_arg_name_int [3] __fieldsolver_MOD_get_field [30] __pifwriter_MOD_make_global_char
+  [21] __command_line_MOD_get_arg_name_str [6] __fieldsolver_MOD_total_deriv_2d (FieldSolver.f90) [16] __pifwriter_MOD_make_global_int
+  [22] __command_line_MOD_parse_args [25] __globalutils_MOD_cleanandallocate (GlobalUtils.f90) [17] __pifwriter_MOD_make_global_real
+  [19] __domain_tools_MOD_create_axis [15] __globalutils_MOD_get_e_at_pos [31] __pifwriter_MOD_makemetadata
+  [23] __fieldsolver_MOD_e_x (FieldSolver.f90) [8] __globalutils_MOD_selectconditions [32] __pifwriter_MOD_openfile
+  [24] __fieldsolver_MOD_e_y (FieldSolver.f90) [26] __globalutils_MOD_singleinitial (GlobalUtils.f90) [20] __pifwriter_MOD_str
+   [7] __fieldsolver_MOD_gauss_seidel_iteration (FieldSolver.f90) [27] __globalutils_MOD_to_upper (GlobalUtils.f90)
+   [5] __fieldsolver_MOD_get_d_rms (FieldSolver.f90) [28] __particlesolver_MOD_velocityverlet
