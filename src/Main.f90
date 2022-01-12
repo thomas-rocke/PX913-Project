@@ -47,12 +47,9 @@ program main
 
   call OpenFile(Run_Data, File_Data)
   call MakeMetaData(File_Data, Run_Data, Fields, Particle)
-  !call WriteFields(File_Data, Fields)
-  !call WriteParticle(File_Data, Particle)
+  call WriteFields(File_Data, Fields)
+  call WriteParticle(File_Data, Particle)
   call CloseFile(File_data)
-
-  Print *, Fields%E((/0.0_REAL64, 3.0_REAL64/))
-
 
 
 

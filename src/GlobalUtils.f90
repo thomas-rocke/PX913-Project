@@ -16,7 +16,7 @@ module GlobalUtils
   ! ####################
 
   real(kind=REAL64), parameter :: DEFAULT_DT = 0.01
-  integer, parameter :: DEFAULT_NUM_TIMESTEPS = 10
+  integer, parameter :: DEFAULT_NUM_TIMESTEPS = 1000
 
   ! ################
   ! # CUSTOM TYPES #
@@ -232,8 +232,8 @@ module GlobalUtils
     allocate(particle%acc(0:num_timesteps, 2))
 
     ! Fields object allocation
-    allocate(fields%rho(0:nx+1, 0:ny+1))
-    allocate(fields%phi(0:nx+1, 0:ny+1))
+    allocate(fields%rho(1:nx, 1:ny))
+    allocate(fields%phi(1:nx, 1:ny))
     allocate(fields%Ex(1:nx, 1:ny))
     allocate(fields%Ey(1:nx, 1:ny))
     call create_axis(fields%x_axis, nx, (/-1.0_REAL64, 1.0_REAL64/), delta=fields%dx)

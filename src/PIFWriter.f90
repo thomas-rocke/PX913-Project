@@ -276,7 +276,7 @@ module PIFWriter
     END IF
 
     ! phi
-    ierr = nf90_put_var(id, File_Data%phi_id, Fields%phi)
+    ierr = nf90_put_var(id, File_Data%phi_id, Fields%phi(1:size(Fields%rho, 1), 1:size(Fields%rho, 2)))
     IF (ierr /= nf90_noerr) THEN
         PRINT*, TRIM(nf90_strerror(ierr))
         RETURN

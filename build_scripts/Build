@@ -5,7 +5,7 @@
 #### COMMAND LINE ARGS ####
 # Can be modified to change system
 
-problem="null"
+problem="single"
 nx=100
 ny=100
 
