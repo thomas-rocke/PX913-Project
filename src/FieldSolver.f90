@@ -59,7 +59,7 @@ module FieldSolver
 
       e_tot = get_e_tot(Fields%phi, Fields%rho, inv_dx_square, inv_dy_square)
       d_rms = get_d_rms(Fields%phi, inv_dx_square, inv_dy_square)
-      error = abs(e_tot / d_rms)
+      error = abs(e_tot / (d_rms + 1E-40))
 
       Print *, "Iteration ", iter, " finished with error ", error
       if (error <= err_tol) exit ! Abort loop if convergence reached
