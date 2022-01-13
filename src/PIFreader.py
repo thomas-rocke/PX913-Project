@@ -107,6 +107,7 @@ class PIFreader:
         plt.subplots_adjust(left=0.1, bottom=-0.5, right=0.9, top=0.9, wspace=0.3, hspace=0.5)
 
         #plt.show()
+        print('Done')
         f.savefig(self.img_file_name, bbox_inches="tight")
 
 
