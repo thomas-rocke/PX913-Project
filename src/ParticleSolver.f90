@@ -45,18 +45,15 @@ module ParticleSolver
         
             print *, "Iteration number: ", t
             print *, "Current Position: "
-            print *, "x: ", particle%pos(t+1,x)
-            print *, "y: ", particle%pos(t+1,x)
+            print *, particle%pos(t+1,x), particle%pos(t+1,x)
             print *, " "
 
             print *, "Current Velocity: "
-            print *, "x: ", particle%vel(t+1,x)
-            print *, "y: ", particle%vel(t+1,x)
+            print *, particle%vel(t+1,x), particle%vel(t+1,x)
             print *, " "
 
             print *, "Current Acceleration: "
-            print *, "x: ", particle%acc(t,x)
-            print *, "y: ", particle%acc(t,x)
+            print *, particle%acc(t,x), particle%acc(t,x)
             print *, "###########################################"
 
         end do

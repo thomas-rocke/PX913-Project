@@ -62,6 +62,7 @@ class PIFreader:
         # Subplot 3: Charge Density
         ax3 = f.add_subplot(533)
         img3 = ax3.imshow(self.rho, extent=(-1,1,-1,1))
+        ax3.plot(self.positions[0], self.positions[1], linewidth=1, c="red")
         ax3.set_title("Electric Field - Charge Density")
         ax3.set_xlabel("x")            
         ax3.set_ylabel("y")
