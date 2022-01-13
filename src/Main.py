@@ -1,7 +1,7 @@
 import sys
 import os
-from PIFreader import PIFReader
-from DataVis import generate_plot
+#from PIFreader import PIFReader
+#from DataVis import generate_plot
 
 #Constants
 problems = ["Null", "Single", "Double"]
@@ -16,12 +16,19 @@ nx = args[1]
 
 ny = args[2]
 
+if (len(args) > 3) and (args[3] in problems): # Problem specified, and allowed
+    probs_to_use = [args[3]]
+else:
+    probs_to_use = problems
+
+
 # Go through each possible problem
-for prob in problems:
+for prob in probs_to_use:
     fname = f"Run({prob}, nx={nx}, ny={ny}).pif"
     full_path = path + fname
-
+    print(full_path)
     # Only attempt to update plots if files exist
     if os.path.exists(full_path):
-        data = PIFReader(full_path)
-        generate_plot(data)
+        pass
+        #data = PIFReader(full_path)
+        #generate_plot(data)
