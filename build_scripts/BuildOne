@@ -37,8 +37,8 @@ then
     ./$outfile nx=$nx ny=$ny problem=$problem
 
     #### EXECUTE PYTHON VISUALISATION ####
-    echo "Executing Python visualisation"
-    python3 ../src/DataVis.py
+    echo "Generating and saving visualisation"
+    python3 ../src/Main.py $nx $ny $problem
 else
     echo "Compiling step failed. Aborting"
 fi
