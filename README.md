@@ -10,3 +10,6 @@ NetCDF formatted data files produced and used by the source code
 
 ### build_scripts/
 Bash scripts to compile various useful executables.
+
+### Figures/
+Subdirectory to store all generated figures
