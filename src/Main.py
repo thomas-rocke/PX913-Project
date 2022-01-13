@@ -1,7 +1,7 @@
 import sys
 import os
-#from PIFreader import PIFReader
-#from DataVis import generate_plot
+from PIFreader import PIFReader
+from DataVis import generate_plot
 
 #Constants
 problems = ["Null", "Single", "Double"]
@@ -30,5 +30,5 @@ for prob in probs_to_use:
     # Only attempt to update plots if files exist
     if os.path.exists(full_path):
         pass
-        #data = PIFReader(full_path)
-        #generate_plot(data)
+        data = PIFReader(full_path)
+        generate_plot(data)
