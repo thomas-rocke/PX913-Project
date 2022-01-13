@@ -27,7 +27,7 @@ for prob in probs_to_use:
     full_path = path + fname
     print(full_path)
     # Only attempt to update plots if files exist
-    if os.path.exists(full_path):
+    if os.path.exists(full_path + '.pif'):
         pass
-        data = PIFreader(full_path)
+        data = PIFreader(fname)
         data.generate_plot()
