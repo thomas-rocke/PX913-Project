@@ -5,40 +5,40 @@ from matplotlib import gridspec
 import re
 
 class PIFreader:
+    # A python class that reads electric field and particle position, velocity, and acceleration
+    # output from the corresponding netcdf file
+    # Contains a method to plot this data
+
     # Attributes
     def __init__(self,file_name):
 
         # File Names
-
         self.file_name = file_name
-
         self.open_file = "../data/" + file_name +  ".pif"
-
         self.img_file_name = "../Figures/" + file_name + ".png"
 
         # Load netcdf file
         self.dat = nc.Dataset(self.open_file, "r", format="NETCDF4")
     
+        # Output Data
+        # Electric field and charge density
         self.Ex = self.dat["E_x"][:]
-
         self.Ey = self.dat["E_y"][:]
-
         self.rho = self.dat["ChargeDensity"][:] 
 
+        # Axes
         self.time = self.dat["t_axis"][:]
-
         self.x = self.dat["x_axis"][:]
-
         self.y = self.dat["y_axis"][:]
 
+        # Particle positions, velocities, and accelerations
         self.positions = self.dat["Positions"][:]
-
         self.velocities = self.dat["Velocities"][:]
-
         self.accelerations = self.dat["Accelerations"][:]
     
     # Plotting
     def generate_plot(self):
+        # General
         f = plt.figure(figsize=(20,10), dpi=400)
         f.suptitle(self.file_name)
         gs = gridspec.GridSpec(1,2, width_ratios=[2,1])
@@ -103,7 +103,6 @@ class PIFreader:
 
 
         # Adjust spacing between subplots
-
         plt.subplots_adjust(left=0.1, bottom=-0.5, right=0.9, top=0.9, wspace=0.3, hspace=0.5)
 
         #plt.show()
