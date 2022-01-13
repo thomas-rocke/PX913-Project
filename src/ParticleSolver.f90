@@ -20,7 +20,6 @@ module ParticleSolver
         
         do t = 0, run_data%numTimesteps -1
 
-            E = fields%E(particle%pos(t,:))
             ! Update particle position
             particle%pos(t+1,x) = particle%pos(t,x) &
                                 + particle%vel(t,x)*run_data%dt &
@@ -31,14 +30,14 @@ module ParticleSolver
 
             ! Get electric field at updated position
             ! Update particle accelrations
-            E = fields%E(particle%pos(t,:))
-            particle%acc(t+1,x) = E(x)
-            particle%acc(t+1,y) = E(y)
+            E = fields%E(particle%pos(t+1,:))
+            particle%acc(t+1,x) = -1.0_real64*E(x)
+            particle%acc(t+1,y) = -1.0_real64*E(y)
          
             ! Update particle velocities
             particle%vel(t+1,x) = particle%vel(t,x) &
                                 + ((particle%acc(t+1,x) &
-                                +particle%acc(t,x))/2.0_REAL64)*run_data%dt
+                                + particle%acc(t,x))/2.0_REAL64)*run_data%dt
             particle%vel(t+1,y) = particle%vel(t,y) &
                                 + ((particle%acc(t+1,y) &
                                 +particle%acc(t,y))/2.0_REAL64)*run_data%dt
