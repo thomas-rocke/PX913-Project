@@ -27,6 +27,10 @@ ny : integer; number of grid cells in y direction
 
 
 ## Python
+### Main.py
+Main python file. Takes command line args (./Main.py nx ny problem) and uses the PIFReader and generate_plot from DataVis.py in order to produce and save figures.
+"problem" is an optional command line arg. If present, only figures for that problem will be generated. If absent, data for all problems will be used to generate plots.
+
 ### DataVis.py
 Loads data for NetCDF file, and provides key visualisation of the system.
 

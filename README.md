@@ -9,4 +9,7 @@ Source code for the project
 NetCDF formatted data files produced and used by the source code
 
 ### build_scripts/
-Bash scripts to compile various useful executables.
+Bash scripts to compile the code and execute various useful things (Full data generation, valgrind memtesting, debugging, etc...)
+
+### Figures/
+Subdirectory to store all generated figures
