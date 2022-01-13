@@ -31,4 +31,4 @@ for prob in probs_to_use:
     if os.path.exists(full_path):
         pass
         data = PIFReader(full_path)
-        generate_plot(data)
+        data.generate_plot()
