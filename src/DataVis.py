@@ -3,100 +3,16 @@ import netCDF4 as nc
 import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib import gridspec
+from PIFreader import PIFreader
 
-# Load data from netCDF file 
-dat = nc.Dataset("../data/Run(Single, nx=100, ny=100).pif", "r", format="NETCDF4")
+single = PIFreader("Run(Single, nx=100, ny=100)")
 
+single.generate_plot()
 
-Ex = dat["E_x"][:]
+double = PIFreader("Run(Double, nx=100, ny=100)")
 
-Ey = dat["E_y"][:]
+double.generate_plot()
 
-rho = dat["ChargeDensity"][:] 
+single = PIFreader("Run(Null, nx=100, ny=100)")
 
-time = dat["t_axis"][:]
-
-x = dat["x_axis"][:]
-
-y = dat["y_axis"][:]
-
-positions = dat["Positions"][:]
-
-velocities = dat["Velocities"][:]
-
-accelerations = dat["Accelerations"][:]
-
-
-# Plots
-# General - Create figure and set its size
-# We can then add our subplots
-f = plt.figure(figsize=(20,10), dpi=400)
-gs = gridspec.GridSpec(1,2, width_ratios=[2,1])
-
-# Subplot 1: Ex
-ax1 = f.add_subplot(531)
-img1 = ax1.imshow(Ex, extent=(1,len(Ex),1,len(Ex)))
-ax1.set_title("Electric Field - Ex")
-ax1.set_xlabel("x")            
-ax1.set_ylabel("y")
-f.colorbar(img1)
-
-# Subplot 2: Ey
-ax2 = f.add_subplot(532)
-img2 = ax2.imshow(Ey, extent=(1,len(Ey),1,len(Ey)))
-ax2.set_title("Electric Field - Ey")
-ax2.set_xlabel("x")            
-ax2.set_ylabel("y")
-f.colorbar(img2)
-
-# Subplot 3: Charge Density
-ax3 = f.add_subplot(533)
-img3 = ax3.imshow(rho, extent=(1,len(rho),1,len(rho)))
-ax3.set_title("Electric Field - Charge Density")
-ax3.set_xlabel("x")            
-ax3.set_ylabel("y")
-f.colorbar(img3)
-
-# Subplot 4: X & Y Position vs time
-ax4 = f.add_subplot(534)
-ax4.plot(time, positions[0], linewidth=1, c="blue", label="X")
-ax4.plot(time, positions[1], linewidth=1, c="red", label="Y")
-ax4.set_title("Particle Positions vs. Time")
-ax4.set_xlabel("time")
-ax4.set_ylabel("Position")
-ax4.legend()
-
-# Subplot 5: Velocity vs time
-ax5 = f.add_subplot(535)
-ax5.plot(time, velocities[0], linewidth=1, c="blue", label="X")
-ax5.plot(time, velocities[1], linewidth=1, c="red", label="Y")
-ax5.set_title("Particle Velocities vs. Time")
-ax5.set_xlabel("time")
-ax5.set_ylabel("Velocity")
-ax5.legend()
-
-# Subplot 6: Accleration vs time
-ax6 = f.add_subplot(536)
-ax6.plot(time, accelerations[0], linewidth=1, c="blue", label="X")
-ax6.plot(time, accelerations[1], linewidth=1, c="red", label="Y")
-ax6.set_title("Particle Accelerations vs. Time")
-ax6.set_xlabel("time")
-ax6.set_ylabel("Acceleration")
-ax6.legend()
-
-# Subplot 7: Y Position vs X Position
-ax7 = f.add_subplot(537)
-ax7.scatter(positions[0], positions[1], s=0.5)
-ax7.set_title("Particle Y Position vs. X Position")
-ax7.set_xlabel("X")
-ax7.set_ylabel("Y")
-#ax7.set_xticks(x)
-#ax7.set_yticks(y)
-
-
-# Adjust spacing between subplots
-
-plt.subplots_adjust(left=0.1, bottom=-0.5, right=0.9, top=0.9, wspace=0.3, hspace=0.5)
-
-#plt.show()
-f.savefig("../Figures/single.png", bbox_inches="tight")
+single.generate_plot()
